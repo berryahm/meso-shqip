@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mëso Shqip</title>
+<meta name="description" content="Lojë për fëmijë: mëso shqipen standarde me kuize, rrokje, shkronja dhe zare.">
+<meta name="theme-color" content="#D2232A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mëso shqip">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preload" href="fonts/grandstander.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Grandstander";src:url("fonts/grandstander.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Andika";src:url("fonts/andika-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Andika";src:url("fonts/andika-700.woff2") format("woff2");font-weight:700;font-display:swap}
+/* Layout: one column, max 980px. Red header with a kilim edge → game cards → Abetare letter board.
+   Game view: top bar (home · title · progress) → white stage card → feedback strip.
+   Single bright theme on purpose: a picture-book world for children. */
+:root{
+  --paper:#F3F5FA; --card:#FFFFFF; --ink:#1D1B27; --ink-2:#5A5869; --line:#D9DEEA; --on-dark:#FFFFFF;
+  --flag:#D2232A; --flag-deep:#A8171D; --flag-soft:#FCE3E2; --on-flag-2:#FFD9D7;
+  --sun:#FFBF1F; --sun-soft:#FFF0C4;
+  --sea:#0F7A8A; --sea-soft:#D9F0F2;
+  --plum:#6E3CA3; --plum-soft:#ECE3F7;
+  --sky-soft:#E1E9FF;
+  --ok:#1A8F4C; --ok-soft:#DCF4E5; --no:#D9434A; --no-soft:#FDE3E3;
+  --f-display:"Grandstander","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Andika","Verdana",system-ui,sans-serif;
+  --f-emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  --r:20px;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{overscroll-behavior-y:none;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{padding-bottom:env(safe-area-inset-bottom,0px);margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.stage,.gart,.board{-webkit-user-select:none;user-select:none}
+.wrap{max-width:980px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.de{display:block;font-family:var(--f-body);font-weight:400;font-size:.78rem;line-height:1.35;color:var(--ink-2)}
+.de-inline{display:inline}
+.no-de .de{display:none!important}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.emo,.pic,.a-emo,.lc-pic{font-family:var(--f-emoji);line-height:1}
+mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2px}
+
+/* Header */
+.hero{background:var(--flag);color:var(--on-dark)}
+.hero .wrap{padding-block:calc(22px + env(safe-area-inset-top,0px)) 34px;display:grid;gap:12px}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.eyebrow{font-family:var(--f-display);font-weight:600;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase}
+.hero .de{color:var(--on-flag-2)}
+.eyebrow .de{text-transform:none;letter-spacing:0;font-size:.85rem}
+.hero h1{margin:6px 0 0;font-family:var(--f-display);font-weight:800;font-size:clamp(3rem,11vw,5.4rem);line-height:.92;text-wrap:balance}
+.hero h1 .e{color:var(--sun)}
+.lede{margin:0;max-width:42ch;font-size:1.15rem}
+.lede .de{font-size:.92rem;margin-top:2px}
+.stats{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.stats span{font-family:var(--f-display);font-weight:600;font-size:.95rem;padding:4px 12px;border-radius:999px;background:var(--flag-deep)}
+.toggles{display:flex;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:999px;border:2px solid var(--on-dark);background:transparent;color:var(--on-dark);font-family:var(--f-display);font-weight:800;font-size:.95rem;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--on-dark);color:var(--flag)}
+.pill svg{width:20px;height:20px}
+.kilim{height:20px;background:
+  linear-gradient(135deg,var(--flag) 25%,transparent 25%) -10px 0/20px 20px,
+  linear-gradient(225deg,var(--flag) 25%,transparent 25%) -10px 0/20px 20px,
+  linear-gradient(315deg,var(--paper) 25%,transparent 25%) 0 0/20px 20px,
+  linear-gradient(45deg,var(--paper) 25%,transparent 25%) 0 0/20px 20px,
+  var(--ink)}
+
+.install-hint{display:flex;align-items:center;gap:12px;margin-top:6px;padding:12px 14px;border-radius:16px;background:var(--flag-deep);font-size:.95rem;line-height:1.35}
+.install-hint svg{flex:none;width:28px;height:28px}
+.install-hint p{margin:0;flex:1;min-width:0}
+.install-hint small{display:block;color:var(--on-flag-2)}
+.install-hint button{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid var(--on-dark);background:transparent;color:var(--on-dark);cursor:pointer;font-weight:800}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100% - 32px);padding:10px 10px 10px 18px;border:2px solid var(--ink);border-radius:18px;background:var(--card);box-shadow:0 5px 0 var(--ink);font-family:var(--f-display);font-weight:800}
+.toast .btn{min-height:44px;padding:0 16px;font-size:1rem}
+
+/* Sections */
+.sec{padding-block:30px 6px}
+.sec-head{display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap;margin-bottom:16px}
+.sec-head h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,4.5vw,2.1rem);line-height:1.1}
+.sec-head .tag{font-family:var(--f-display);font-weight:600;color:var(--flag)}
+.sec-head .note{flex-basis:100%;margin:0;color:var(--ink-2)}
+
+/* Game cards */
+.games{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:560px){.games{grid-template-columns:repeat(2,minmax(0,1fr))}.gcard:first-child{grid-column:span 2}}
+@media (min-width:880px){.games{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.gcard{display:flex;flex-direction:column;text-align:left;padding:0;border:2px solid var(--ink);border-radius:var(--r);background:var(--card);box-shadow:0 5px 0 var(--ink);cursor:pointer;overflow:hidden;transition:transform .12s ease,box-shadow .12s ease}
+.gcard:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--ink)}
+.gcard:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.gart{display:flex;align-items:center;justify-content:center;gap:12px;height:132px;background:var(--tint);border-bottom:2px solid var(--ink)}
+.gbody{display:flex;flex-direction:column;gap:2px;padding:14px 16px 18px}
+.gtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gname{font-family:var(--f-display);font-weight:800;font-size:1.4rem;line-height:1.15}
+.gdesc{margin-top:6px}
+.mini-stars{display:inline-flex;gap:2px;flex:none}
+.mini-stars svg{width:20px;height:20px}
+.star-on{fill:var(--sun);stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
+.star-off{fill:var(--line)}
+.a-emo{font-size:64px}
+.a-chips{display:flex;flex-direction:column;gap:6px}
+.a-chips span{font-family:var(--f-display);font-weight:800;font-size:1rem;padding:2px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card)}
+.a-chips .on{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.a-tile{display:inline-grid;place-items:center;min-width:58px;height:58px;padding:0 10px;border:2px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:0 4px 0 var(--ink);font-family:var(--f-display);font-weight:800;font-size:1.7rem;transform:rotate(var(--tilt,0deg))}
+.a-tile.s{color:var(--sea)}
+.a-tile.l{color:var(--flag)}
+.a-word{font-family:var(--f-display);font-weight:800;font-size:2.1rem;display:flex;align-items:flex-end;gap:4px;line-height:1}
+.a-gap{display:inline-block;width:1.1em;height:1em;border-bottom:4px dashed var(--flag)}
+.a-ky,.a-kjo{font-family:var(--f-display);font-weight:800;font-size:2.8rem;line-height:1}
+.a-ky{color:var(--sea)}
+.a-kjo{color:var(--plum)}
+.a-sl{font-family:var(--f-display);font-size:2rem;color:var(--ink-2)}
+.a-die{display:grid;place-items:center;width:66px;height:66px;border:2px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:0 4px 0 var(--ink);font-family:var(--f-display);font-weight:800;font-size:1.35rem}
+.a-die:first-child{transform:rotate(-8deg)}
+.a-die:last-child{transform:rotate(6deg)}
+.a-die .emo{font-size:36px}
+
+/* Abetare */
+.abc{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.abc{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}}
+.board{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:12px;background:var(--card);border:2px solid var(--ink);border-radius:var(--r)}
+@media (min-width:520px){.board{grid-template-columns:repeat(9,minmax(0,1fr))}}
+.ltr{aspect-ratio:1;max-width:100%;border:0;border-radius:12px;background:var(--paper);font-family:var(--f-display);font-weight:800;font-size:clamp(1.05rem,3.6vw,1.4rem);cursor:pointer;color:var(--ink)}
+.ltr.special{color:var(--flag)}
+.ltr:hover{background:var(--sun-soft)}
+.ltr[aria-pressed="true"]{background:var(--ink);color:var(--on-dark)}
+.ltr.special[aria-pressed="true"]{background:var(--flag);color:var(--on-dark)}
+.lcard{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;padding:22px 16px;background:var(--card);border:2px solid var(--ink);border-radius:var(--r);box-shadow:0 5px 0 var(--ink);text-align:center}
+.lc-letters{display:flex;align-items:baseline;gap:10px;font-family:var(--f-display);font-weight:800;line-height:1}
+.lc-big{font-size:3.4rem;color:var(--flag)}
+.lc-small{font-size:2.4rem;color:var(--ink-2)}
+.lc-pic{font-size:72px;margin-block:6px}
+.lc-word{font-family:var(--f-display);font-weight:800;font-size:1.9rem;line-height:1.1}
+.speak{display:none;position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:var(--sun);color:var(--ink);place-items:center;cursor:pointer;padding:0}
+.speak svg{width:22px;height:22px}
+.has-voice .speak{display:inline-grid}
+
+/* Game view */
+.gbar{display:flex;align-items:center;gap:12px;padding-block:calc(16px + env(safe-area-inset-top,0px)) 10px}
+.gbar-title{flex:1;min-width:0}
+.gbar-title h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.35rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{flex:none;display:inline-grid;place-items:center;width:46px;height:46px;padding:0;border-radius:14px;border:2px solid var(--ink);background:var(--card);box-shadow:0 3px 0 var(--ink);cursor:pointer;color:var(--ink)}
+.iconbtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.iconbtn svg{width:24px;height:24px}
+.count{font-family:var(--f-display);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
+.dots{display:flex;gap:6px;margin-bottom:16px}
+.dot{flex:1;height:10px;border-radius:99px;background:var(--line)}
+.dot.now{background:var(--ink)}
+.dot.ok{background:var(--ok)}
+.dot.late{background:var(--sun)}
+.stage{position:relative;display:grid;justify-items:center;gap:16px;padding:22px 18px 26px;background:var(--card);border:2px solid var(--ink);border-radius:26px;box-shadow:0 6px 0 var(--ink);text-align:center}
+.ask{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(1.35rem,4.5vw,1.8rem);line-height:1.15;text-wrap:balance}
+.ask .de{font-size:.85rem;margin-top:4px}
+.pic-wrap{position:relative;width:100%;display:grid;place-items:center}
+.pic{font-size:clamp(90px,24vw,150px);animation:pop .45s ease-out}
+.pic-wrap .speak{top:0;right:0}
+.opts{display:grid;gap:12px;width:100%;max-width:640px}
+.opts.n2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opts.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opts.n4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:540px){.opts.n3{grid-template-columns:minmax(0,1fr)}.opts.n4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.opt{min-height:66px;padding:10px;border:2px solid var(--ink);border-radius:16px;background:var(--card);box-shadow:0 4px 0 var(--ink);font-family:var(--f-display);font-weight:800;font-size:clamp(1.25rem,4vw,1.6rem);line-height:1.1;cursor:pointer;overflow-wrap:anywhere}
+.opt:hover:not(:disabled):not(.is-ok){background:var(--sun-soft)}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.opt .de{margin-top:3px}
+.opt.ky{color:var(--sea)}
+.opt.kjo{color:var(--plum)}
+.opt:disabled{cursor:default}
+.opt.is-ok{background:var(--ok-soft);border-color:var(--ok);box-shadow:0 4px 0 var(--ok);color:var(--ok)}
+.opt.is-no,.tile.is-no{background:var(--no-soft);border-color:var(--no);box-shadow:0 4px 0 var(--no);color:var(--no);animation:shake .4s}
+.opt.is-no:disabled{opacity:.6}
+.sentence{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(1.5rem,5.5vw,2.2rem);line-height:1.25;text-wrap:balance}
+.blank{display:inline-block;min-width:2.4ch;padding:0 .2em;border-bottom:4px dashed var(--ink-2);color:var(--ink-2);text-align:center;line-height:1.1}
+.blank.filled{border-bottom-style:solid;border-color:var(--ok);color:var(--ok)}
+.blankword{display:flex;align-items:flex-end;justify-content:center;font-family:var(--f-display);font-weight:800;font-size:clamp(2.2rem,8vw,3.2rem);line-height:1}
+.gap{display:inline-block;min-width:1.1em;height:1em;margin-right:2px;border-bottom:5px dashed var(--flag);color:var(--flag);text-align:center;line-height:1}
+.gap.filled{border-bottom-color:transparent;min-width:0}
+.slots{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.slot{display:grid;place-items:center;min-width:70px;height:62px;padding:0 12px;border:3px dashed var(--line);border-radius:14px;font-family:var(--f-display);font-weight:800;font-size:1.7rem;color:var(--sea)}
+.slot.filled{border-style:solid;border-color:var(--sea);background:var(--sea-soft);animation:pop .3s}
+.slots.done .slot{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.tile{min-width:72px;height:62px;padding:0 14px;border:2px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:0 4px 0 var(--ink);font-family:var(--f-display);font-weight:800;font-size:1.7rem;cursor:pointer;transform:rotate(var(--tilt,0deg))}
+.tile:hover{background:var(--sun-soft)}
+.tile.used{visibility:hidden}
+.dice{display:flex;justify-content:center;gap:20px}
+.die{display:grid;place-items:center;align-content:center;width:112px;height:112px;border:3px solid var(--ink);border-radius:24px;background:var(--card);box-shadow:0 6px 0 var(--ink);font-family:var(--f-display);font-weight:800}
+.die .emo{font-size:60px}
+.die .pn{font-size:2.3rem;line-height:1}
+.die.rolling{animation:wobble .24s linear infinite}
+.dice-q{display:grid;gap:14px;justify-items:center;width:100%}
+.dice-q:empty{display:none}
+.q{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.3rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:0 24px;border:2px solid var(--ink);border-radius:16px;background:var(--flag);color:var(--on-dark);box-shadow:0 4px 0 var(--ink);font-family:var(--f-display);font-weight:800;font-size:1.25rem;cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.alt{background:var(--card);color:var(--ink)}
+.btn svg{width:22px;height:22px}
+.fb{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;min-height:92px;padding-block:18px 30px}
+.fb-msg{flex:1 1 240px;min-width:0;font-size:1.1rem}
+.fb-msg strong{font-family:var(--f-display);font-weight:800;font-size:1.45rem;margin-right:8px}
+.fb-msg.is-ok strong{color:var(--ok)}
+.fb-msg.is-no strong{color:var(--no)}
+.fb-msg b{font-family:var(--f-display);font-weight:800}
+.fb-msg .de{font-size:.85rem}
+
+/* Result */
+.done{display:grid;justify-items:center;text-align:center;gap:8px;padding-block:calc(48px + env(safe-area-inset-top,0px)) 40px}
+.done-game{font-family:var(--f-display);font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;font-size:.9rem}
+.bigstars{display:flex;gap:10px;align-items:flex-end;margin-block:8px}
+.bigstars svg{width:clamp(64px,18vw,96px);height:auto}
+.bigstars svg:nth-child(2){margin-bottom:18px}
+.bigstars .star-on{animation:starIn .5s both;transform-box:fill-box;transform-origin:center}
+.done h2{margin:6px 0 0;font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,7vw,3rem);line-height:1.05}
+.done p{margin:6px 0 0;font-size:1.1rem}
+.done-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:18px}
+.foot{padding-block:30px 36px;color:var(--ink-2);font-size:.85rem}
+
+@keyframes pop{0%{transform:scale(.6);opacity:.2}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes wobble{0%,100%{transform:rotate(0)}50%{transform:rotate(14deg) translateY(-6px)}}
+@keyframes starIn{0%{transform:scale(0) rotate(-40deg)}70%{transform:scale(1.15) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<section id="home" class="screen">
+  <header class="hero">
+    <div class="wrap">
+      <div class="hero-top">
+        <span class="eyebrow">Për fëmijë 5–10 vjeç <span class="de de-inline">· für Kinder von 5 bis 10</span></span>
+        <div class="toggles">
+          <button class="pill install-btn" type="button" hidden>Instalo</button>
+          <button class="pill de-btn" type="button" aria-pressed="true" title="Deutsche Hilfe ein/aus">DE</button>
+          <button class="pill sound-btn" type="button" aria-pressed="true" aria-label="Zëri"></button>
+        </div>
+      </div>
+      <h1>M<span class="e">ë</span>so shqip!</h1>
+      <p class="lede">Luaj dhe mëso shqipen standarde: fjalë, shkronja, rrokje dhe gramatikë.<span class="de">Spielend Standard-Albanisch lernen: Wörter, Buchstaben, Silben und Grammatik.</span></p>
+      <p class="stats" id="stats"></p>
+      <div class="install-hint" id="iosHint" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 11H5.5v9.5h13V11H16"/></svg>
+        <p>Instalo lojën: prek butonin e ndarjes, pastaj „Zum Home-Bildschirm“.<small>Installieren: Teilen-Symbol antippen, dann „Zum Home-Bildschirm“.</small></p>
+        <button type="button" id="iosHintClose" aria-label="Mbyll">✕</button>
+      </div>
+    </div>
+    <div class="kilim" aria-hidden="true"></div>
+  </header>
+
+  <main>
+    <section class="sec">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Lojërat</h2><span class="tag">Zgjidh një lojë</span>
+          <p class="note de">Die Spiele · wähle ein Spiel</p>
+        </div>
+        <div class="games" id="games"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Abetarja</h2><span class="tag">36 shkronja</span>
+          <p class="note">Prek një shkronjë. Shkronjat e kuqe janë të veçanta për shqipen.<span class="de">Das Alphabet: Tippe auf einen Buchstaben. Rot = typisch albanische Buchstaben.</span></p>
+        </div>
+        <div class="abc">
+          <div class="board" id="board" role="group" aria-label="Abetarja"></div>
+          <div class="lcard" id="lcard" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="foot wrap">Mëso shqip · v0.2 · funksionon edhe pa internet <span class="de de-inline">· funktioniert auch offline</span></footer>
+</section>
+
+<section id="game" class="screen" hidden>
+  <div class="wrap">
+    <div class="gbar">
+      <button class="iconbtn" id="homeBtn" type="button" aria-label="Kthehu te lojërat"></button>
+      <div class="gbar-title"><h2 id="gTitle"></h2><span class="de" id="gDe"></span></div>
+      <span class="count" id="count"></span>
+      <button class="iconbtn sound-btn" type="button" aria-pressed="true" aria-label="Zëri"></button>
+    </div>
+    <div class="dots" id="dots" role="img"></div>
+    <div class="stage" id="stage"></div>
+    <div class="fb">
+      <div class="fb-msg" id="fbMsg" aria-live="polite"></div>
+      <button class="btn" id="next" type="button" hidden><span class="lbl">Tjetra</span></button>
+    </div>
+  </div>
+</section>
+
+<section id="done" class="screen" hidden>
+  <div class="wrap done">
+    <span class="done-game" id="doneGame"></span>
+    <div class="bigstars" id="bigStars"></div>
+    <h2 id="doneTitle"></h2><span class="de" id="doneDe"></span>
+    <p id="doneScore"></p><span class="de" id="doneScoreDe"></span>
+    <div class="done-actions">
+      <button class="btn" id="again" type="button">Luaj përsëri</button>
+      <button class="btn alt" id="toHome" type="button">Lojërat e tjera</button>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" hidden>
+  <span>Ka një version të ri.</span>
+  <button class="btn" id="reload" type="button">Rifresko</button>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- Content ---------- */
+// [emoji, word, German, gender (m/f), definite form]
+const VOCAB = [
+  ['🐰','lepur','der Hase','m','lepuri'], ['🐕','qen','der Hund','m','qeni'], ['🐈','mace','die Katze','f','macja'],
+  ['🐄','lopë','die Kuh','f','lopa'], ['🐴','kalë','das Pferd','m','kali'], ['🐓','gjel','der Hahn','m','gjeli'],
+  ['🐔','pulë','das Huhn','f','pula'], ['🐑','dele','das Schaf','f','delja'], ['🐐','dhi','die Ziege','f','dhia'],
+  ['🐟','peshk','der Fisch','m','peshku'], ['🐦','zog','der Vogel','m','zogu'], ['🦋','flutur','der Schmetterling','f','flutura'],
+  ['🐝','bletë','die Biene','f','bleta'], ['🐢','breshkë','die Schildkröte','f','breshka'], ['🦁','luan','der Löwe','m','luani'],
+  ['🐘','elefant','der Elefant','m','elefanti'], ['🐒','majmun','der Affe','m','majmuni'], ['🦊','dhelpër','der Fuchs','f','dhelpra'],
+  ['🐻','ari','der Bär','m','ariu'], ['🐭','mi','die Maus','m','miu'], ['🦔','iriq','der Igel','m','iriqi'],
+  ['🐬','delfin','der Delfin','m','delfini'], ['🐺','ujk','der Wolf','m','ujku'], ['🐸','zhabë','der Frosch','f','zhaba'],
+  ['🦅','shqiponjë','der Adler','f','shqiponja'], ['🍎','mollë','der Apfel','f','molla'], ['🍐','dardhë','die Birne','f','dardha'],
+  ['🍌','banane','die Banane','f','bananja'], ['🍋','limon','die Zitrone','m','limoni'], ['🍊','portokall','die Orange','m','portokalli'],
+  ['🍇','rrush','die Trauben','m','rrushi'], ['🍅','domate','die Tomate','f','domatja'], ['🥔','patate','die Kartoffel','f','patatja'],
+  ['🥕','karotë','die Karotte','f','karota'], ['🧅','qepë','die Zwiebel','f','qepa'], ['🍞','bukë','das Brot','f','buka'],
+  ['🧀','djathë','der Käse','m','djathi'], ['🥚','vezë','das Ei','f','veza'], ['🍦','akullore','das Eis','f','akullorja'],
+  ['🍫','çokollatë','die Schokolade','f','çokollata'], ['🏠','shtëpi','das Haus','f','shtëpia'], ['🌸','lule','die Blume','f','lulja'],
+  ['📖','libër','das Buch','m','libri'], ['☀️','diell','die Sonne','m','dielli'], ['🌙','hënë','der Mond','f','hëna'],
+  ['⭐','yll','der Stern','m','ylli'], ['🌳','pemë','der Baum','f','pema'], ['⛰️','mal','der Berg','m','mali'],
+  ['🌊','det','das Meer','m','deti'], ['🚗','makinë','das Auto','f','makina'], ['✈️','aeroplan','das Flugzeug','m','aeroplani'],
+  ['⚽','top','der Ball','m','topi'], ['🔑','çelës','der Schlüssel','m','çelësi'], ['🔪','thikë','das Messer','f','thika'],
+  ['🧥','xhaketë','die Jacke','f','xhaketa'], ['🧦','çorape','die Socke','f','çorapja'], ['💡','llambë','die Lampe','f','llamba'],
+  ['🚪','derë','die Tür','f','dera'], ['✋','dorë','die Hand','f','dora'], ['👁️','sy','das Auge','m','syri'],
+  ['🦷','dhëmb','der Zahn','m','dhëmbi'], ['👦','djalë','der Junge','m','djali'], ['👧','vajzë','das Mädchen','f','vajza'],
+  ['🍃','gjethe','das Blatt','f','gjethja']
+].map(([e, sq, de, g, def]) => ({ e, sq, de, g, def }));
+const byWord = Object.fromEntries(VOCAB.map(v => [v.sq, v]));
+
+// The 36 letters of the Albanian alphabet, each with an example word
+const ABC = [
+  ['a','🐻','ari','der Bär'], ['b','🐝','bletë','die Biene'], ['c','🎪','cirk','der Zirkus'], ['ç','🔑','çelës','der Schlüssel'],
+  ['d','🚪','derë','die Tür'], ['dh','🐐','dhi','die Ziege'], ['e','🐘','elefant','der Elefant'], ['ë','💭','ëndërr','der Traum'],
+  ['f','🦋','flutur','der Schmetterling'], ['g','🪨','gur','der Stein'], ['gj','🐓','gjel','der Hahn'], ['h','🌙','hënë','der Mond'],
+  ['i','🦔','iriq','der Igel'], ['j','🐆','jaguar','der Jaguar'], ['k','🐴','kalë','das Pferd'], ['l','🌸','lule','die Blume'],
+  ['ll','💡','llambë','die Lampe'], ['m','🍎','mollë','der Apfel'], ['n','🌃','natë','die Nacht'], ['nj','1️⃣','një','eins'],
+  ['o','⏰','orë','die Uhr'], ['p','🐟','peshk','der Fisch'], ['q','🐕','qen','der Hund'], ['r','🤖','robot','der Roboter'],
+  ['rr','🍇','rrush','die Trauben'], ['s','👁️','sy','das Auge'], ['sh','🏠','shtëpi','das Haus'], ['t','⚽','top','der Ball'],
+  ['th','🔪','thikë','das Messer'], ['u','💧','ujë','das Wasser'], ['v','🥚','vezë','das Ei'], ['x','🪲','xixëllonjë','das Glühwürmchen'],
+  ['xh','🧥','xhaketë','die Jacke'], ['y','⭐','yll','der Stern'], ['z','🐦','zog','der Vogel'], ['zh','🐸','zhabë','der Frosch']
+].map(([l, e, sq, de]) => ({ l, e, sq, de }));
+
+const SPECIAL = new Set(['ç','dh','ë','gj','ll','nj','rr','sh','th','xh','zh']);
+const DIGRAPHS = ['dh','gj','ll','nj','rr','sh','th','xh','zh'];
+const firstLetter = w => DIGRAPHS.includes(w.slice(0, 2)) ? w.slice(0, 2) : w[0];
+// Letters children typically mix up with each one
+const CONFUSE = {
+  a:['e','ë','o'], b:['p','d','v'], c:['ç','s','x'], 'ç':['c','q','sh'], d:['dh','th','t'], dh:['d','th','z'],
+  e:['ë','i','a'], 'ë':['e','a','o'], f:['v','th','p'], g:['gj','k','q'], gj:['g','xh','j'], h:['j','k','rr'],
+  i:['y','e','j'], j:['y','i','gj'], k:['q','g','c'], l:['ll','r','n'], ll:['l','j','r'], m:['n','nj','b'],
+  n:['nj','m','l'], nj:['n','gj','j'], o:['u','a','ë'], p:['b','f','t'], q:['k','ç','gj'], r:['rr','l','n'],
+  rr:['r','l','h'], s:['sh','z','c'], sh:['s','zh','xh'], t:['th','d','ç'], th:['t','dh','f'], u:['y','o','v'],
+  v:['f','b','u'], x:['xh','z','s'], xh:['x','zh','gj'], y:['i','u','j'], z:['zh','s','x'], zh:['z','sh','xh']
+};
+const LETTER_FOCUS = new Set([...SPECIAL, 'q', 'y', 'x', 'c']);
+const LETTER_POOL = [...VOCAB, ...ABC.filter(a => !byWord[a.sq] && a.sq !== 'xixëllonjë')];
+
+const SYLL = ['mo·llë','ba·na·ne','do·ma·te','pa·ta·te','ka·ro·të','qe·pë','bu·kë','dja·thë','ve·zë','a·ku·llo·re',
+  'ço·ko·lla·të','li·mon','dar·dhë','lu·le','ma·ce','lo·pë','pu·lë','de·le','flu·tur','ble·të','dhel·për',
+  'shqi·po·një','e·le·fant','maj·mun','le·pur','del·fin','zha·bë','shtë·pi','li·bër','ma·ki·në','xha·ke·të',
+  'thi·kë','ço·ra·pe','çe·lës','pe·më','hë·në','vaj·zë','dja·lë']
+  .map(s => { const parts = s.split('·'); return { parts, v: byWord[parts.join('')] }; })
+  .filter(x => x.v);
+const ALL_SYL = [...new Set(SYLL.flatMap(x => x.parts))];
+
+const PERS = [
+  { sq:'unë', de:'ich', acc:'mua', deAcc:'mich' }, { sq:'ti', de:'du', acc:'ty', deAcc:'dich' },
+  { sq:'ai', de:'er', acc:'të', deAcc:'ihn' }, { sq:'ajo', de:'sie', acc:'të', deAcc:'sie' },
+  { sq:'ne', de:'wir', acc:'ne', deAcc:'uns' }, { sq:'ju', de:'ihr', acc:'ju', deAcc:'euch' }
+];
+const ACC = ['mua','ty','të','ne','ju'];
+const ACC_DE = { mua:'mich', ty:'dich', 'të':'ihn / sie', ne:'uns', ju:'euch' };
+const ITEMS = [
+  { e:'🍲', sq:'supa', de:'die Suppe' }, { e:'🍦', sq:'akullorja', de:'das Eis' }, { e:'🎂', sq:'torta', de:'die Torte' },
+  { e:'⚽', sq:'topi', de:'der Ball' }, { e:'📖', sq:'libri', de:'das Buch' }, { e:'🎁', sq:'dhurata', de:'das Geschenk' }
+];
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; el.append(c instanceof Node ? c : String(c)); }
+  return el;
+}
+function svg(str) { const t = document.createElement('template'); t.innerHTML = str.trim(); return t.content.firstChild; }
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = (a, n) => shuffle(a).slice(0, n);
+const rnd = a => a[Math.floor(Math.random() * a.length)];
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const deI = t => h('span', { class: 'de de-inline' }, ' · ' + t);
+
+const ICON = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg>',
+  sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+};
+const STAR = 'M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z';
+const starSvg = on => svg(`<svg viewBox="0 0 24 24" aria-hidden="true"><path class="${on ? 'star-on' : 'star-off'}" d="${STAR}"/></svg>`);
+const starRow = n => h('span', { class: 'mini-stars', role: 'img', 'aria-label': `${n} nga 3 yje` }, [0, 1, 2].map(i => starSvg(i < n)));
+
+/* ---------- Saved progress (this browser only) ---------- */
+const KEY = 'meso-shqip-v1';
+let prefs = { de: true, sound: true, best: {} };
+try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {} };
+
+/* ---------- Sound ---------- */
+let actx = null;
+function tone(seq) {
+  if (!prefs.sound) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = actx.currentTime;
+    for (const [f, d, at, type] of seq) {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t0 + at);
+      g.gain.exponentialRampToValueAtTime(0.16, t0 + at + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + at + d);
+      o.connect(g).connect(actx.destination); o.start(t0 + at); o.stop(t0 + at + d + 0.05);
+    }
+  } catch (e) {}
+}
+const sfx = {
+  ok: () => tone([[660, .14, 0], [990, .24, .11]]),
+  no: () => tone([[196, .25, 0, 'triangle']]),
+  tap: () => tone([[523, .08, 0, 'triangle']]),
+  tick: () => tone([[300 + Math.random() * 200, .04, 0, 'triangle']]),
+  win: () => tone([[523, .16, 0], [659, .16, .13], [784, .16, .26], [1047, .4, .39]])
+};
+
+// Albanian text-to-speech, only where the device has an Albanian voice
+let sqVoice = null;
+function findVoice() {
+  try { sqVoice = speechSynthesis.getVoices().find(v => /^sq/i.test(v.lang)) || null; } catch (e) { sqVoice = null; }
+  document.documentElement.classList.toggle('has-voice', !!sqVoice);
+}
+if ('speechSynthesis' in window) { findVoice(); speechSynthesis.addEventListener?.('voiceschanged', findVoice); }
+function say(text) {
+  if (!sqVoice || !prefs.sound) return;
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = sqVoice; u.lang = sqVoice.lang; u.rate = .85; speechSynthesis.speak(u); } catch (e) {}
+}
+const speakBtn = text => h('button', { class: 'speak', type: 'button', 'aria-label': 'Dëgjo', onclick: () => say(text) }, svg(ICON.sound));
+
+/* ---------- Toggles ---------- */
+function syncToggles() {
+  document.documentElement.classList.toggle('no-de', !prefs.de);
+  document.querySelectorAll('.de-btn').forEach(b => b.setAttribute('aria-pressed', String(prefs.de)));
+  document.querySelectorAll('.sound-btn').forEach(b => { b.setAttribute('aria-pressed', String(prefs.sound)); b.replaceChildren(svg(prefs.sound ? ICON.sound : ICON.mute)); });
+}
+document.querySelectorAll('.de-btn').forEach(b => b.addEventListener('click', () => { prefs.de = !prefs.de; save(); syncToggles(); }));
+document.querySelectorAll('.sound-btn').forEach(b => b.addEventListener('click', () => { prefs.sound = !prefs.sound; save(); syncToggles(); sfx.tap(); }));
+
+/* ---------- Games ---------- */
+const ROUNDS = 8;
+const ask = (sq, de) => h('p', { class: 'ask' }, sq, h('span', { class: 'de' }, de));
+const pic = (e, word) => h('div', { class: 'pic-wrap' }, h('div', { class: 'pic', role: 'img', 'aria-label': 'Foto' }, e), word ? speakBtn(word) : null);
+const optBtn = (label, deLabel, onPick) => h('button', { class: 'opt', type: 'button', onclick: ev => { if (!G.solved) onPick(ev.currentTarget); } }, label, deLabel ? h('span', { class: 'de' }, deLabel) : null);
+function endingNode(v) {
+  let p = 0; while (p < v.sq.length && v.sq[p] === v.def[p]) p++;
+  return h('b', null, v.def.slice(0, p), h('mark', null, v.def.slice(p)));
+}
+
+const GAMES = {
+  foto: {
+    title: 'Çfarë është?', deTitle: 'Bilderquiz', tint: '--sun-soft',
+    desc: 'Shiko foton dhe zgjidh fjalën e duhur.', deDesc: 'Bild anschauen, richtiges Wort wählen.',
+    art: () => [h('span', { class: 'a-emo' }, '🐰'), h('span', { class: 'a-chips' }, h('span', null, 'qen'), h('span', { class: 'on' }, 'lepur'), h('span', null, 'mi'))],
+    make: () => pick(VOCAB, ROUNDS),
+    render(item, s) {
+      const opts = shuffle([item, ...pick(VOCAB.filter(v => v !== item), 2)]);
+      s.append(ask('Çfarë është kjo?', 'Was ist das?'), pic(item.e, item.sq),
+        h('div', { class: 'opts n3' }, opts.map(o => optBtn(o.sq, null, b => {
+          if (o === item) { b.classList.add('is-ok'); ok([h('b', null, item.sq), deI(item.de)], item.sq); }
+          else { no(b); b.disabled = true; }
+        }))));
+    }
+  },
+  shkronja: {
+    title: 'Shkronja e parë', deTitle: 'Anfangsbuchstabe', tint: '--flag-soft',
+    desc: 'Cila shkronjë mungon në fillim të fjalës?', deDesc: 'Welcher Buchstabe fehlt am Anfang?',
+    art: () => [h('span', { class: 'a-tile l', style: '--tilt:-6deg' }, 'Sh'), h('span', { class: 'a-word' }, h('span', { class: 'a-gap' }), 'tëpi')],
+    make: () => {
+      const focus = LETTER_POOL.filter(w => LETTER_FOCUS.has(firstLetter(w.sq)));
+      const rest = LETTER_POOL.filter(w => !LETTER_FOCUS.has(firstLetter(w.sq)));
+      return shuffle([...pick(focus, 5), ...pick(rest, 3)]);
+    },
+    render(item, s) {
+      const L = firstLetter(item.sq), tail = item.sq.slice(L.length);
+      const gap = h('span', { class: 'gap' });
+      s.append(ask('Cila shkronjë mungon?', 'Welcher Buchstabe fehlt?'), pic(item.e, item.sq),
+        h('div', { class: 'blankword' }, gap, tail),
+        h('div', { class: 'opts n4' }, shuffle([L, ...CONFUSE[L]]).map(o => optBtn(cap(o), null, b => {
+          if (o === L) { b.classList.add('is-ok'); gap.textContent = L; gap.classList.add('filled'); ok([h('b', null, h('mark', null, L), tail), deI(item.de)], item.sq); }
+          else { no(b); b.disabled = true; }
+        }))));
+    }
+  },
+  rrokjet: {
+    title: 'Rrokjet', deTitle: 'Silbenpuzzle', tint: '--sea-soft',
+    desc: 'Bashko rrokjet dhe krijo fjalën.', deDesc: 'Silben zum Wort zusammensetzen.',
+    art: () => ['ba', 'na', 'ne'].map((t, i) => h('span', { class: 'a-tile s', style: `--tilt:${[-6, 4, -2][i]}deg` }, t)),
+    make: () => pick(SYLL, ROUNDS),
+    render(item, s) {
+      const { parts, v } = item;
+      const extra = pick(ALL_SYL.filter(x => !parts.includes(x)), 1);
+      const slots = parts.map(() => h('span', { class: 'slot' }));
+      const row = h('div', { class: 'slots', 'aria-label': `${parts.length} rrokje` }, slots);
+      let k = 0;
+      const tiles = shuffle([...parts, ...extra]).map((t, i) => h('button', {
+        class: 'tile', type: 'button', style: `--tilt:${(i % 2 ? 1 : -1) * (2 + Math.floor(Math.random() * 4))}deg`,
+        onclick: ev => {
+          if (G.solved) return;
+          const b = ev.currentTarget;
+          if (t !== parts[k]) { no(b); return; }
+          sfx.tap(); slots[k].textContent = t; slots[k].classList.add('filled'); b.classList.add('used'); b.disabled = true; k++;
+          if (k === parts.length) { row.classList.add('done'); ok([h('b', null, v.sq), deI(v.de)], v.sq); }
+        }
+      }, t));
+      s.append(ask('Bashko rrokjet!', 'Tippe die Silben in der richtigen Reihenfolge an.'), pic(v.e, v.sq), row, h('div', { class: 'tiles' }, tiles));
+    }
+  },
+  gjinia: {
+    title: 'Ky apo kjo?', deTitle: 'Männlich oder weiblich', tint: '--plum-soft',
+    desc: 'Ky qen, kjo mace. Gjej gjininë e fjalës.', deDesc: 'ky = männlich, kjo = weiblich',
+    art: () => [h('span', { class: 'a-ky' }, 'ky'), h('span', { class: 'a-sl' }, '/'), h('span', { class: 'a-kjo' }, 'kjo')],
+    make: () => shuffle([...pick(VOCAB.filter(v => v.g === 'm'), 4), ...pick(VOCAB.filter(v => v.g === 'f'), 4)]),
+    render(item, s) {
+      const right = item.g === 'm' ? 'ky' : 'kjo';
+      const blank = h('span', { class: 'blank' }, '?');
+      s.append(ask('Ky apo kjo?', 'ky = männlich · kjo = weiblich'), pic(item.e, item.sq),
+        h('p', { class: 'sentence' }, blank, ' ', item.sq),
+        h('div', { class: 'opts n2' }, [['ky', 'männlich'], ['kjo', 'weiblich']].map(([w, d]) => {
+          const btn = optBtn(cap(w), d, b => {
+            if (w === right) {
+              b.classList.add('is-ok'); blank.textContent = cap(w); blank.classList.add('filled');
+              ok([h('span', null, `${cap(w)} ${item.sq} → `), endingNode(item), deI(item.de)], `${w} ${item.sq}, ${item.def}`);
+            } else { no(b); b.disabled = true; }
+          });
+          btn.classList.add(w); return btn;
+        })));
+    }
+  },
+  zari: {
+    title: 'Për kë është?', deTitle: 'Pronomen-Würfelspiel', tint: '--sky-soft',
+    desc: 'Hidh zarat: torta është për të!', deDesc: 'Würfeln: Die Torte ist für sie!',
+    art: () => [h('span', { class: 'a-die' }, h('span', { class: 'emo' }, '🎂')), h('span', { class: 'a-die' }, 'ajo')],
+    make: () => shuffle([...PERS, ...pick(PERS, 2)]).map(p => ({ p, item: rnd(ITEMS) })),
+    render(r, s) {
+      const d1 = h('div', { class: 'die', 'aria-label': 'Zari 1' }, h('span', { class: 'emo' }, '🎲'));
+      const d2 = h('div', { class: 'die', 'aria-label': 'Zari 2' }, h('span', { class: 'pn' }, '?'));
+      const area = h('div', { class: 'dice-q' });
+      const faceItem = (d, it) => d.replaceChildren(h('span', { class: 'emo' }, it.e));
+      const facePers = (d, p) => d.replaceChildren(h('span', { class: 'pn' }, p.sq), h('span', { class: 'de' }, p.de));
+      const roll = h('button', { class: 'btn', type: 'button', onclick: () => {
+        roll.hidden = true; d1.classList.add('rolling'); d2.classList.add('rolling');
+        let n = 0;
+        const t = setInterval(() => {
+          faceItem(d1, rnd(ITEMS)); facePers(d2, rnd(PERS)); sfx.tick();
+          if (++n < 10) return;
+          clearInterval(t); faceItem(d1, r.item); facePers(d2, r.p);
+          d1.classList.remove('rolling'); d2.classList.remove('rolling');
+          showQuestion();
+        }, 80);
+      } }, 'Hidh zarat!');
+      function showQuestion() {
+        const blank = h('span', { class: 'blank' }, '?');
+        const answer = r.p.acc;
+        area.replaceChildren(
+          h('p', { class: 'q' }, `Për kë është ${r.item.sq}?`, h('span', { class: 'de' }, `Für wen ist ${r.item.de}?`)),
+          h('p', { class: 'sentence' }, `${cap(r.item.sq)} është për `, blank, '.'),
+          h('div', { class: 'opts n4' }, shuffle([answer, ...pick(ACC.filter(a => a !== answer), 3)]).map(a => optBtn(a, ACC_DE[a], b => {
+            if (a === answer) {
+              b.classList.add('is-ok'); blank.textContent = a; blank.classList.add('filled');
+              const line = `${cap(r.item.sq)} është për ${a}.`;
+              ok([h('b', null, line), h('span', { class: 'de' }, `${cap(r.item.de)} ist für ${r.p.deAcc}.`)], line);
+            } else { no(b); b.disabled = true; }
+          }))));
+      }
+      s.append(ask('Hidh zarat!', 'Würfle! Wer bekommt was?'), h('div', { class: 'dice' }, d1, d2), roll, area);
+    }
+  }
+};
+
+/* ---------- Game engine ---------- */
+let G = null;
+const PRAISE = ['Bravo!', 'Shumë mirë!', 'Të lumtë!', 'Saktë!', 'Shkëlqyeshëm!'];
+const RETRY = ['Provo përsëri!', 'Pothuajse!', 'Edhe një herë!'];
+
+function show(id) {
+  for (const s of ['home', 'game', 'done']) $('#' + s).hidden = s !== id;
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', id === 'home' ? '#D2232A' : '#F3F5FA');
+  window.scrollTo(0, 0);
+}
+function setFb(state, nodes) { const m = $('#fbMsg'); m.className = 'fb-msg ' + state; m.replaceChildren(...nodes.flat(Infinity)); }
+
+function startGame(id) {
+  const def = GAMES[id];
+  G = { id, items: def.make(), i: 0, score: 0, results: [] };
+  $('#gTitle').textContent = def.title; $('#gDe').textContent = def.deTitle;
+  if (!(history.state && history.state.play)) history.pushState({ play: true }, '');
+  show('game'); renderRound();
+}
+function renderRound() {
+  G.missed = false; G.solved = false;
+  $('#next').hidden = true; setFb('', []);
+  drawDots();
+  const stage = $('#stage'); stage.replaceChildren();
+  GAMES[G.id].render(G.items[G.i], stage);
+}
+function drawDots() {
+  const n = G.items.length;
+  $('#dots').replaceChildren(...G.items.map((_, k) => h('span', { class: 'dot ' + (G.results[k] || (k === G.i ? 'now' : '')) })));
+  $('#dots').setAttribute('aria-label', `Pyetja ${G.i + 1} nga ${n}`);
+  $('#count').textContent = `${G.i + 1} / ${n}`;
+}
+function ok(detail, spoken) {
+  if (G.solved) return;
+  G.solved = true;
+  if (!G.missed) G.score++;
+  G.results[G.i] = G.missed ? 'late' : 'ok';
+  sfx.ok(); drawDots();
+  setFb('is-ok', [h('strong', null, rnd(PRAISE)), detail]);
+  const nb = $('#next');
+  nb.replaceChildren(h('span', { class: 'lbl' }, G.i === G.items.length - 1 ? 'Shiko yjet' : 'Tjetra'), svg(ICON.next));
+  nb.hidden = false;
+  setTimeout(() => nb.focus({ preventScroll: true }), 60);
+  if (spoken) say(spoken);
+}
+function no(btn) {
+  if (G.solved) return;
+  G.missed = true; sfx.no();
+  if (btn) {
+    btn.classList.remove('is-no'); void btn.offsetWidth; btn.classList.add('is-no');
+    if (btn.classList.contains('tile')) setTimeout(() => btn.classList.remove('is-no'), 450);
+  }
+  setFb('is-no', [h('strong', null, rnd(RETRY)), h('span', { class: 'de' }, 'Versuch es nochmal!')]);
+}
+function finish() {
+  const n = G.items.length, s = G.score;
+  const stars = s >= n ? 3 : s >= n - 2 ? 2 : 1;
+  if (stars > (prefs.best[G.id] || 0)) { prefs.best[G.id] = stars; save(); }
+  const [title, de] = [['Mirë! Provo përsëri.', 'Gut! Versuch es nochmal.'], ['Shumë mirë!', 'Sehr gut!'], ['Shkëlqyeshëm!', 'Ausgezeichnet!']][stars - 1];
+  $('#doneGame').textContent = GAMES[G.id].title;
+  $('#bigStars').replaceChildren(...[0, 1, 2].map(i => { const e = starSvg(i < stars); e.firstChild.style.animationDelay = (i * .18) + 's'; return e; }));
+  $('#bigStars').setAttribute('aria-label', `${stars} nga 3 yje`);
+  $('#doneTitle').textContent = title; $('#doneDe').textContent = de;
+  $('#doneScore').textContent = `${s} nga ${n} saktë që herën e parë`;
+  $('#doneScoreDe').textContent = `${s} von ${n} beim ersten Versuch richtig`;
+  show('done'); sfx.win();
+  $('#again').focus({ preventScroll: true });
+}
+$('#next').addEventListener('click', () => { if (++G.i >= G.items.length) finish(); else renderRound(); });
+$('#again').addEventListener('click', () => startGame(G.id));
+function goHome() {
+  if (history.state && history.state.play) history.back(); // popstate below shows the list
+  else { renderGames(); show('home'); }
+}
+window.addEventListener('popstate', () => { if ($('#home').hidden) { renderGames(); show('home'); } });
+if (history.state && history.state.play) history.replaceState(null, '');
+$('#toHome').addEventListener('click', goHome);
+$('#homeBtn').addEventListener('click', goHome);
+$('#homeBtn').append(svg(ICON.home));
+$('#bigStars').setAttribute('role', 'img');
+
+/* ---------- Home ---------- */
+function renderGames() {
+  $('#games').replaceChildren(...Object.entries(GAMES).map(([id, g]) => {
+    const best = prefs.best[id] || 0;
+    return h('button', { class: 'gcard', type: 'button', style: `--tint:var(${g.tint})`, onclick: () => startGame(id) },
+      h('span', { class: 'gart', 'aria-hidden': 'true' }, g.art()),
+      h('span', { class: 'gbody' },
+        h('span', { class: 'gtop' }, h('span', { class: 'gname' }, g.title), starRow(best)),
+        h('span', { class: 'de' }, g.deTitle),
+        h('span', { class: 'gdesc' }, g.desc),
+        h('span', { class: 'de' }, g.deDesc)));
+  }));
+}
+function showLetter(k, quiet) {
+  [...$('#board').children].forEach((el, i) => el.setAttribute('aria-pressed', String(i === k)));
+  const a = ABC[k];
+  $('#lcard').replaceChildren(
+    h('div', { class: 'lc-letters' }, h('span', { class: 'lc-big' }, cap(a.l)), h('span', { class: 'lc-small' }, a.l)),
+    h('div', { class: 'lc-pic', role: 'img', 'aria-label': a.de }, a.e),
+    h('div', { class: 'lc-word' }, h('mark', null, a.sq.slice(0, a.l.length)), a.sq.slice(a.l.length)),
+    h('span', { class: 'de' }, a.de),
+    speakBtn(a.sq));
+  if (!quiet) { sfx.tap(); say(a.sq); }
+}
+$('#board').replaceChildren(...ABC.map((a, k) => h('button', { class: 'ltr' + (SPECIAL.has(a.l) ? ' special' : ''), type: 'button', 'aria-pressed': 'false', onclick: () => showLetter(k) }, cap(a.l))));
+showLetter(0, true);
+
+const words = new Set([...VOCAB, ...ABC].map(w => w.sq)).size;
+$('#stats').replaceChildren(...[`${Object.keys(GAMES).length} lojëra`, `${ABC.length} shkronja`, `${words} fjalë`].map(t => h('span', null, t)));
+renderGames();
+syncToggles();
+
+/* ---------- App: offline, install, updates ---------- */
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+if ('serviceWorker' in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+  // A new version took over: offer a reload instead of interrupting a running game
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) $('#toast').hidden = false; });
+  $('#reload').addEventListener('click', () => location.reload());
+}
+if (standalone && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+
+// Android / Chrome / Edge: own install button
+let installEvt = null;
+const installBtn = document.querySelector('.install-btn');
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; installBtn.hidden = false; });
+installBtn.addEventListener('click', async () => {
+  if (!installEvt) return;
+  installEvt.prompt();
+  try { await installEvt.userChoice; } catch (e) {}
+  installEvt = null; installBtn.hidden = true;
+});
+window.addEventListener('appinstalled', () => { installBtn.hidden = true; });
+
+// iPhone / iPad Safari has no install prompt: show how to add it to the home screen
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (isIOS && !standalone && !prefs.hideIosHint) $('#iosHint').hidden = false;
+$('#iosHintClose').addEventListener('click', () => { $('#iosHint').hidden = true; prefs.hideIosHint = true; save(); });
+})();
+</script>
+</body>
+</html>

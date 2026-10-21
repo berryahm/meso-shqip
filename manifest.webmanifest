@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Mëso shqip!",
+  "short_name": "Mëso shqip",
+  "description": "Lojë për fëmijë: mëso shqipen standarde me kuize, rrokje, shkronja dhe zare. Spielend Standard-Albanisch lernen.",
+  "lang": "sq",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F3F5FA",
+  "theme_color": "#D2232A",
+  "categories": ["education", "kids", "games"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
