@@ -123,6 +123,17 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
 .a-die:last-child{transform:rotate(6deg)}
 .a-die .emo{font-size:36px}
 
+/* Topics */
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.topic{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 14px;border:2px solid var(--ink);border-radius:999px;background:var(--card);font-family:var(--f-display);font-weight:800;font-size:1rem;cursor:pointer}
+.topic .emo{font-size:1.15rem}
+.topic .de{display:inline;font-size:.78rem;margin-left:2px}
+.topic:hover{background:var(--sun-soft)}
+.topic[aria-pressed="true"]{background:var(--ink);color:var(--on-dark)}
+.topic[aria-pressed="true"] .de{color:var(--line)}
+.gcard:disabled,.gcard:disabled:hover,.gcard:disabled:active{cursor:default;opacity:.55;transform:none;border-color:var(--ink-2);box-shadow:0 5px 0 var(--line)}
+.gnote{margin-top:6px;font-weight:700;color:var(--flag)}
+
 /* Abetare */
 .abc{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:760px){.abc{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}}
@@ -211,6 +222,17 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
 .fb-msg b{font-family:var(--f-display);font-weight:800}
 .fb-msg .de{font-size:.85rem}
 
+.swatch{display:block;width:clamp(110px,30vw,150px);max-width:100%;aspect-ratio:1;border:3px solid var(--ink);border-radius:46% 54% 52% 48% / 50% 44% 56% 50%;background:var(--sw);box-shadow:0 6px 0 var(--ink);animation:pop .45s ease-out}
+.numpic{display:grid;justify-items:center;gap:10px;animation:pop .45s ease-out}
+.numpic .num{font-family:var(--f-display);font-weight:800;font-size:clamp(84px,22vw,128px);line-height:1;color:var(--sea)}
+.tens{display:grid;gap:6px}
+.tens span{display:flex;gap:5px}
+.tens i{width:14px;height:14px;border-radius:50%;background:var(--sun);border:2px solid var(--ink)}
+.slots .pre{display:grid;place-items:center;height:62px;padding:0 4px;font-family:var(--f-display);font-weight:800;font-size:1.7rem;color:var(--ink-2)}
+.pre-w{color:var(--ink-2)}
+.opt.long{font-size:clamp(.95rem,3vw,1.2rem)}
+.gtheme{display:block;font-family:var(--f-display);font-weight:600;font-size:.85rem;color:var(--flag)}
+
 /* Result */
 .done{display:grid;justify-items:center;text-align:center;gap:8px;padding-block:calc(48px + env(safe-area-inset-top,0px)) 40px}
 .done-game{font-family:var(--f-display);font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;font-size:.9rem}
@@ -259,9 +281,10 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
     <section class="sec">
       <div class="wrap">
         <div class="sec-head">
-          <h2>Lojërat</h2><span class="tag">Zgjidh një lojë</span>
-          <p class="note de">Die Spiele · wähle ein Spiel</p>
+          <h2>Lojërat</h2><span class="tag">Zgjidh temën dhe lojën</span>
+          <p class="note de">Die Spiele · wähle ein Thema und ein Spiel</p>
         </div>
+        <div class="topics" id="topics" role="group" aria-label="Tema"></div>
         <div class="games" id="games"></div>
       </div>
     </section>
@@ -279,14 +302,14 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
       </div>
     </section>
   </main>
-  <footer class="foot wrap">Mëso shqip · v0.2 · funksionon edhe pa internet <span class="de de-inline">· funktioniert auch offline</span></footer>
+  <footer class="foot wrap">Mëso shqip · v0.3 · funksionon edhe pa internet <span class="de de-inline">· funktioniert auch offline</span></footer>
 </section>
 
 <section id="game" class="screen" hidden>
   <div class="wrap">
     <div class="gbar">
       <button class="iconbtn" id="homeBtn" type="button" aria-label="Kthehu te lojërat"></button>
-      <div class="gbar-title"><h2 id="gTitle"></h2><span class="de" id="gDe"></span></div>
+      <div class="gbar-title"><h2 id="gTitle"></h2><span class="gtheme" id="gTheme"></span><span class="de" id="gDe"></span></div>
       <span class="count" id="count"></span>
       <button class="iconbtn sound-btn" type="button" aria-pressed="true" aria-label="Zëri"></button>
     </div>
@@ -322,32 +345,77 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
 'use strict';
 
 /* ---------- Content ---------- */
-// [emoji, word, German, gender (m/f), definite form]
-const VOCAB = [
-  ['🐰','lepur','der Hase','m','lepuri'], ['🐕','qen','der Hund','m','qeni'], ['🐈','mace','die Katze','f','macja'],
-  ['🐄','lopë','die Kuh','f','lopa'], ['🐴','kalë','das Pferd','m','kali'], ['🐓','gjel','der Hahn','m','gjeli'],
-  ['🐔','pulë','das Huhn','f','pula'], ['🐑','dele','das Schaf','f','delja'], ['🐐','dhi','die Ziege','f','dhia'],
-  ['🐟','peshk','der Fisch','m','peshku'], ['🐦','zog','der Vogel','m','zogu'], ['🦋','flutur','der Schmetterling','f','flutura'],
-  ['🐝','bletë','die Biene','f','bleta'], ['🐢','breshkë','die Schildkröte','f','breshka'], ['🦁','luan','der Löwe','m','luani'],
-  ['🐘','elefant','der Elefant','m','elefanti'], ['🐒','majmun','der Affe','m','majmuni'], ['🦊','dhelpër','der Fuchs','f','dhelpra'],
-  ['🐻','ari','der Bär','m','ariu'], ['🐭','mi','die Maus','m','miu'], ['🦔','iriq','der Igel','m','iriqi'],
-  ['🐬','delfin','der Delfin','m','delfini'], ['🐺','ujk','der Wolf','m','ujku'], ['🐸','zhabë','der Frosch','f','zhaba'],
-  ['🦅','shqiponjë','der Adler','f','shqiponja'], ['🍎','mollë','der Apfel','f','molla'], ['🍐','dardhë','die Birne','f','dardha'],
-  ['🍌','banane','die Banane','f','bananja'], ['🍋','limon','die Zitrone','m','limoni'], ['🍊','portokall','die Orange','m','portokalli'],
-  ['🍇','rrush','die Trauben','m','rrushi'], ['🍅','domate','die Tomate','f','domatja'], ['🥔','patate','die Kartoffel','f','patatja'],
-  ['🥕','karotë','die Karotte','f','karota'], ['🧅','qepë','die Zwiebel','f','qepa'], ['🍞','bukë','das Brot','f','buka'],
-  ['🧀','djathë','der Käse','m','djathi'], ['🥚','vezë','das Ei','f','veza'], ['🍦','akullore','das Eis','f','akullorja'],
-  ['🍫','çokollatë','die Schokolade','f','çokollata'], ['🏠','shtëpi','das Haus','f','shtëpia'], ['🌸','lule','die Blume','f','lulja'],
-  ['📖','libër','das Buch','m','libri'], ['☀️','diell','die Sonne','m','dielli'], ['🌙','hënë','der Mond','f','hëna'],
-  ['⭐','yll','der Stern','m','ylli'], ['🌳','pemë','der Baum','f','pema'], ['⛰️','mal','der Berg','m','mali'],
-  ['🌊','det','das Meer','m','deti'], ['🚗','makinë','das Auto','f','makina'], ['✈️','aeroplan','das Flugzeug','m','aeroplani'],
-  ['⚽','top','der Ball','m','topi'], ['🔑','çelës','der Schlüssel','m','çelësi'], ['🔪','thikë','das Messer','f','thika'],
-  ['🧥','xhaketë','die Jacke','f','xhaketa'], ['🧦','çorape','die Socke','f','çorapja'], ['💡','llambë','die Lampe','f','llamba'],
-  ['🚪','derë','die Tür','f','dera'], ['✋','dorë','die Hand','f','dora'], ['👁️','sy','das Auge','m','syri'],
-  ['🦷','dhëmb','der Zahn','m','dhëmbi'], ['👦','djalë','der Junge','m','djali'], ['👧','vajzë','das Mädchen','f','vajza'],
-  ['🍃','gjethe','das Blatt','f','gjethja']
-].map(([e, sq, de, g, def]) => ({ e, sq, de, g, def }));
-const byWord = Object.fromEntries(VOCAB.map(v => [v.sq, v]));
+const TOPICS = [
+  { id: 'all', sq: 'Të gjitha', de: 'Alle', e: '⭐' },
+  { id: 'kafshet', sq: 'Kafshët', de: 'Tiere', e: '🐰' },
+  { id: 'ushqimi', sq: 'Ushqimi', de: 'Essen', e: '🍎' },
+  { id: 'rreth', sq: 'Rreth nesh', de: 'Rund um uns', e: '🏠' },
+  { id: 'familja', sq: 'Familja', de: 'Familie', e: '👨‍👩‍👧' },
+  { id: 'ngjyrat', sq: 'Ngjyrat', de: 'Farben', e: '🎨' },
+  { id: 'numrat', sq: 'Numrat 1–20', de: 'Zahlen 1–20', e: '🔢' },
+  { id: 'shkolla', sq: 'Shkolla', de: 'Schule', e: '🎒' }
+];
+const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+let topic = 'all';
+const inTopic = w => topic === 'all' || w.t === topic;
+
+// Nouns per topic: [emoji, word, German, gender (m/f), definite form]
+const NOUNS = {
+  kafshet: [
+    ['🐰','lepur','der Hase','m','lepuri'], ['🐕','qen','der Hund','m','qeni'], ['🐈','mace','die Katze','f','macja'],
+    ['🐄','lopë','die Kuh','f','lopa'], ['🐴','kalë','das Pferd','m','kali'], ['🐓','gjel','der Hahn','m','gjeli'],
+    ['🐔','pulë','das Huhn','f','pula'], ['🐑','dele','das Schaf','f','delja'], ['🐐','dhi','die Ziege','f','dhia'],
+    ['🐟','peshk','der Fisch','m','peshku'], ['🐦','zog','der Vogel','m','zogu'], ['🦋','flutur','der Schmetterling','f','flutura'],
+    ['🐝','bletë','die Biene','f','bleta'], ['🐢','breshkë','die Schildkröte','f','breshka'], ['🦁','luan','der Löwe','m','luani'],
+    ['🐘','elefant','der Elefant','m','elefanti'], ['🐒','majmun','der Affe','m','majmuni'], ['🦊','dhelpër','der Fuchs','f','dhelpra'],
+    ['🐻','ari','der Bär','m','ariu'], ['🐭','mi','die Maus','m','miu'], ['🦔','iriq','der Igel','m','iriqi'],
+    ['🐬','delfin','der Delfin','m','delfini'], ['🐺','ujk','der Wolf','m','ujku'], ['🐸','zhabë','der Frosch','f','zhaba'],
+    ['🦅','shqiponjë','der Adler','f','shqiponja']
+  ],
+  ushqimi: [
+    ['🍎','mollë','der Apfel','f','molla'], ['🍐','dardhë','die Birne','f','dardha'], ['🍌','banane','die Banane','f','bananja'],
+    ['🍋','limon','die Zitrone','m','limoni'], ['🍊','portokall','die Orange','m','portokalli'], ['🍇','rrush','die Trauben','m','rrushi'],
+    ['🍅','domate','die Tomate','f','domatja'], ['🥔','patate','die Kartoffel','f','patatja'], ['🥕','karotë','die Karotte','f','karota'],
+    ['🧅','qepë','die Zwiebel','f','qepa'], ['🍞','bukë','das Brot','f','buka'], ['🧀','djathë','der Käse','m','djathi'],
+    ['🥚','vezë','das Ei','f','veza'], ['🍦','akullore','das Eis','f','akullorja'], ['🍫','çokollatë','die Schokolade','f','çokollata']
+  ],
+  rreth: [
+    ['🏠','shtëpi','das Haus','f','shtëpia'], ['🌸','lule','die Blume','f','lulja'], ['☀️','diell','die Sonne','m','dielli'],
+    ['🌙','hënë','der Mond','f','hëna'], ['⭐','yll','der Stern','m','ylli'], ['🌳','pemë','der Baum','f','pema'],
+    ['⛰️','mal','der Berg','m','mali'], ['🌊','det','das Meer','m','deti'], ['🚗','makinë','das Auto','f','makina'],
+    ['✈️','aeroplan','das Flugzeug','m','aeroplani'], ['⚽','top','der Ball','m','topi'], ['🔑','çelës','der Schlüssel','m','çelësi'],
+    ['🔪','thikë','das Messer','f','thika'], ['🧥','xhaketë','die Jacke','f','xhaketa'], ['🧦','çorape','die Socke','f','çorapja'],
+    ['💡','llambë','die Lampe','f','llamba'], ['🚪','derë','die Tür','f','dera'], ['✋','dorë','die Hand','f','dora'],
+    ['👁️','sy','das Auge','m','syri'], ['🦷','dhëmb','der Zahn','m','dhëmbi'], ['👦','djalë','der Junge','m','djali'],
+    ['👧','vajzë','das Mädchen','f','vajza'], ['🍃','gjethe','das Blatt','f','gjethja']
+  ],
+  familja: [
+    ['👨','baba','der Vater','m','babai'], ['👩','nënë','die Mutter','f','nëna'], ['👴','gjysh','der Opa','m','gjyshi'],
+    ['👵','gjyshe','die Oma','f','gjyshja'], ['👦','vëlla','der Bruder','m','vëllai'], ['👧','motër','die Schwester','f','motra'],
+    ['👶','foshnjë','das Baby','f','foshnja'], ['🧒','fëmijë','das Kind','m','fëmija'], ['👨‍👩‍👧‍👦','familje','die Familie','f','familja'],
+    ['🧔','xhaxha','der Onkel','m','xhaxhai'], ['👱‍♀️','teze','die Tante','f','tezja']
+  ],
+  shkolla: [
+    ['🏫','shkollë','die Schule','f','shkolla'], ['📖','libër','das Buch','m','libri'], ['📓','fletore','das Heft','f','fletorja'],
+    ['✏️','laps','der Bleistift','m','lapsi'], ['🖊️','stilolaps','der Kugelschreiber','m','stilolapsi'], ['🎒','çantë','die Schultasche','f','çanta'],
+    ['📏','vizore','das Lineal','f','vizorja'], ['👨‍🏫','mësues','der Lehrer','m','mësuesi'], ['👩‍🏫','mësuese','die Lehrerin','f','mësuesja'],
+    ['🧑‍🎓','nxënës','der Schüler','m','nxënësi'], ['💻','kompjuter','der Computer','m','kompjuteri'], ['🖌️','penel','der Pinsel','m','peneli'],
+    ['📄','letër','das Papier','f','letra'], ['🔔','zile','die Glocke','f','zilja'], ['🌍','glob','der Globus','m','globi']
+  ]
+};
+const VOCAB = Object.entries(NOUNS).flatMap(([t, list]) => list.map(([e, sq, de, g, def]) => ({ e, sq, de, g, def, t })));
+// Colours are painted as blobs; "e kuqe" agrees with "ngjyra" (the colour)
+const COLORS = [
+  ['#E53935','e kuqe','rot'], ['#FDD835','e verdhë','gelb'], ['#43A047','e gjelbër','grün'], ['#1E88E5','blu','blau'],
+  ['#212121','e zezë','schwarz'], ['#FFFFFF','e bardhë','weiss'], ['#FB8C00','portokalli','orange'], ['#F48FB1','rozë','rosa'],
+  ['#8E24AA','vjollcë','lila'], ['#795548','kafe','braun'], ['#9E9E9E','gri','grau']
+].map(([c, sq, de]) => ({ c, sq, de, t: 'ngjyrat' }));
+const NUMS = ['një','dy','tre','katër','pesë','gjashtë','shtatë','tetë','nëntë','dhjetë',
+  'njëmbëdhjetë','dymbëdhjetë','trembëdhjetë','katërmbëdhjetë','pesëmbëdhjetë','gjashtëmbëdhjetë','shtatëmbëdhjetë','tetëmbëdhjetë','nëntëmbëdhjetë','njëzet']
+  .map((sq, i) => ({ n: i + 1, sq, t: 'numrat', de: ['eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun','zehn',
+    'elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn','achtzehn','neunzehn','zwanzig'][i] }));
+const WORDS = [...VOCAB, ...COLORS, ...NUMS];
+const byWord = Object.fromEntries(WORDS.map(v => [v.sq, v]));
 
 // The 36 letters of the Albanian alphabet, each with an example word
 const ABC = [
@@ -375,13 +443,29 @@ const CONFUSE = {
   v:['f','b','u'], x:['xh','z','s'], xh:['x','zh','gj'], y:['i','u','j'], z:['zh','s','x'], zh:['z','sh','xh']
 };
 const LETTER_FOCUS = new Set([...SPECIAL, 'q', 'y', 'x', 'c']);
-const LETTER_POOL = [...VOCAB, ...ABC.filter(a => !byWord[a.sq] && a.sq !== 'xixëllonjë')];
+const LETTER_POOL = [...WORDS, ...ABC.filter(a => !byWord[a.sq] && a.sq !== 'xixëllonjë')];
 
-const SYLL = ['mo·llë','ba·na·ne','do·ma·te','pa·ta·te','ka·ro·të','qe·pë','bu·kë','dja·thë','ve·zë','a·ku·llo·re',
-  'ço·ko·lla·të','li·mon','dar·dhë','lu·le','ma·ce','lo·pë','pu·lë','de·le','flu·tur','ble·të','dhel·për',
-  'shqi·po·një','e·le·fant','maj·mun','le·pur','del·fin','zha·bë','shtë·pi','li·bër','ma·ki·në','xha·ke·të',
-  'thi·kë','ço·ra·pe','çe·lës','pe·më','hë·në','vaj·zë','dja·lë']
-  .map(s => { const parts = s.split('·'); return { parts, v: byWord[parts.join('')] }; })
+const SYLL = [
+  // kafshët
+  'ma·ce','lo·pë','pu·lë','de·le','flu·tur','ble·të','dhel·për','shqi·po·një','e·le·fant','maj·mun','le·pur','del·fin','zha·bë',
+  // ushqimi
+  'mo·llë','ba·na·ne','do·ma·te','pa·ta·te','ka·ro·të','qe·pë','bu·kë','dja·thë','ve·zë','a·ku·llo·re','ço·ko·lla·të','li·mon','dar·dhë',
+  // rreth nesh
+  'lu·le','shtë·pi','ma·ki·në','xha·ke·të','thi·kë','ço·ra·pe','çe·lës','pe·më','hë·në','vaj·zë','dja·lë',
+  // familja
+  'ba·ba','në·në','gjy·she','vë·lla','mo·tër','xha·xha','te·ze','fë·mi·jë',
+  // ngjyrat ("e" stays in place, only the colour word is built)
+  'e ku·qe','e ver·dhë','e gjel·bër','e ze·zë','e bar·dhë','por·to·ka·lli','ro·zë','vjoll·cë','ka·fe',
+  // numrat
+  'ka·tër','pe·së','shta·të','te·të','nën·të','dhje·të','një·zet','një·mbë·dhje·të','dy·mbë·dhje·të','tre·mbë·dhje·të',
+  'ka·tër·mbë·dhje·të','pe·së·mbë·dhje·të','shta·të·mbë·dhje·të','te·të·mbë·dhje·të','nën·të·mbë·dhje·të',
+  // shkolla
+  'li·bër','fle·to·re','çan·të','vi·zo·re','më·su·es','më·su·e·se','nxë·nës','shko·llë','kom·pju·ter','pe·nel','le·tër','zi·le','sti·lo·laps'
+].map(s => {
+    const pre = s.startsWith('e ') ? 'e' : '';
+    const parts = (pre ? s.slice(2) : s).split('·');
+    return { pre, parts, v: byWord[(pre ? 'e ' : '') + parts.join('')] };
+  })
   .filter(x => x.v);
 const ALL_SYL = [...new Set(SYLL.flatMap(x => x.parts))];
 
@@ -415,6 +499,9 @@ const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { cons
 const pick = (a, n) => shuffle(a).slice(0, n);
 const rnd = a => a[Math.floor(Math.random() * a.length)];
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+// Colour words keep their article: "e kuqe" → prefix "e", core "kuqe"
+const prefix = s => s.startsWith('e ') ? 'e' : '';
+const core = s => s.startsWith('e ') ? s.slice(2) : s;
 const deI = t => h('span', { class: 'de de-inline' }, ' · ' + t);
 
 const ICON = {
@@ -431,6 +518,10 @@ const starRow = n => h('span', { class: 'mini-stars', role: 'img', 'aria-label':
 const KEY = 'meso-shqip-v1';
 let prefs = { de: true, sound: true, best: {} };
 try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) {}
+// Stars used to be saved per game only; those count for "all topics" now
+for (const k of Object.keys(prefs.best)) if (!k.includes(':') && k !== 'zari') { prefs.best[k + ':all'] = Math.max(prefs.best[k + ':all'] || 0, prefs.best[k]); delete prefs.best[k]; }
+topic = topicById[prefs.topic] ? prefs.topic : 'all';
+const bestKey = id => GAMES[id].fixed ? id : `${id}:${topic}`;
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {} };
 
 /* ---------- Sound ---------- */
@@ -483,11 +574,30 @@ document.querySelectorAll('.sound-btn').forEach(b => b.addEventListener('click',
 /* ---------- Games ---------- */
 const ROUNDS = 8;
 const ask = (sq, de) => h('p', { class: 'ask' }, sq, h('span', { class: 'de' }, de));
-const pic = (e, word) => h('div', { class: 'pic-wrap' }, h('div', { class: 'pic', role: 'img', 'aria-label': 'Foto' }, e), word ? speakBtn(word) : null);
-const optBtn = (label, deLabel, onPick) => h('button', { class: 'opt', type: 'button', onclick: ev => { if (!G.solved) onPick(ev.currentTarget); } }, label, deLabel ? h('span', { class: 'de' }, deLabel) : null);
+function pic(w) {
+  let art;
+  if (w.c) art = h('span', { class: 'swatch', style: `--sw:${w.c}`, role: 'img', 'aria-label': 'Ngjyrë' });
+  else if (w.n) art = h('div', { class: 'numpic', role: 'img', 'aria-label': String(w.n) }, h('span', { class: 'num' }, w.n),
+    h('span', { class: 'tens', 'aria-hidden': 'true' }, [0, 10].filter(s => w.n > s).map(s => h('span', null, Array.from({ length: Math.min(10, w.n - s) }, () => h('i'))))));
+  else art = h('div', { class: 'pic', role: 'img', 'aria-label': 'Foto' }, w.e);
+  return h('div', { class: 'pic-wrap' }, art, speakBtn(w.sq));
+}
+const optBtn = (label, deLabel, onPick) => h('button', { class: 'opt' + (String(label).length > 11 ? ' long' : ''), type: 'button', onclick: ev => { if (!G.solved) onPick(ev.currentTarget); } }, label, deLabel ? h('span', { class: 'de' }, deLabel) : null);
 function endingNode(v) {
   let p = 0; while (p < v.sq.length && v.sq[p] === v.def[p]) p++;
   return h('b', null, v.def.slice(0, p), h('mark', null, v.def.slice(p)));
+}
+
+function quizAsk(w) {
+  if (w.c) return ask('Çfarë ngjyre është?', 'Welche Farbe ist das?');
+  if (w.n) return ask('Si quhet ky numër?', 'Wie heisst diese Zahl?');
+  return ask('Çfarë është kjo?', 'Was ist das?');
+}
+// Two wrong answers from the same topic; for numbers prefer the easy-to-mix ones (4 / 14, 6 / 7)
+function quizDistractors(w) {
+  const pool = WORDS.filter(v => v.t === w.t && v !== w && !(w.e && v.e === w.e));
+  const near = pick(w.n ? pool.filter(v => [w.n - 10, w.n + 10, w.n - 1, w.n + 1].includes(v.n)) : [], 2);
+  return [...near, ...pick(pool.filter(v => !near.includes(v)), 2 - near.length)];
 }
 
 const GAMES = {
@@ -495,10 +605,10 @@ const GAMES = {
     title: 'Çfarë është?', deTitle: 'Bilderquiz', tint: '--sun-soft',
     desc: 'Shiko foton dhe zgjidh fjalën e duhur.', deDesc: 'Bild anschauen, richtiges Wort wählen.',
     art: () => [h('span', { class: 'a-emo' }, '🐰'), h('span', { class: 'a-chips' }, h('span', null, 'qen'), h('span', { class: 'on' }, 'lepur'), h('span', null, 'mi'))],
-    make: () => pick(VOCAB, ROUNDS),
+    make: () => pick(WORDS.filter(inTopic), ROUNDS),
     render(item, s) {
-      const opts = shuffle([item, ...pick(VOCAB.filter(v => v !== item), 2)]);
-      s.append(ask('Çfarë është kjo?', 'Was ist das?'), pic(item.e, item.sq),
+      const opts = shuffle([item, ...quizDistractors(item)]);
+      s.append(quizAsk(item), pic(item),
         h('div', { class: 'opts n3' }, opts.map(o => optBtn(o.sq, null, b => {
           if (o === item) { b.classList.add('is-ok'); ok([h('b', null, item.sq), deI(item.de)], item.sq); }
           else { no(b); b.disabled = true; }
@@ -510,17 +620,19 @@ const GAMES = {
     desc: 'Cila shkronjë mungon në fillim të fjalës?', deDesc: 'Welcher Buchstabe fehlt am Anfang?',
     art: () => [h('span', { class: 'a-tile l', style: '--tilt:-6deg' }, 'Sh'), h('span', { class: 'a-word' }, h('span', { class: 'a-gap' }), 'tëpi')],
     make: () => {
-      const focus = LETTER_POOL.filter(w => LETTER_FOCUS.has(firstLetter(w.sq)));
-      const rest = LETTER_POOL.filter(w => !LETTER_FOCUS.has(firstLetter(w.sq)));
-      return shuffle([...pick(focus, 5), ...pick(rest, 3)]);
+      const pool = LETTER_POOL.filter(inTopic);
+      const take = pick(pool.filter(w => LETTER_FOCUS.has(firstLetter(core(w.sq)))), 5);
+      take.push(...pick(pool.filter(w => !take.includes(w)), ROUNDS - take.length));
+      return shuffle(take);
     },
     render(item, s) {
-      const L = firstLetter(item.sq), tail = item.sq.slice(L.length);
+      const p = prefix(item.sq), word = core(item.sq);
+      const L = firstLetter(word), tail = word.slice(L.length);
       const gap = h('span', { class: 'gap' });
-      s.append(ask('Cila shkronjë mungon?', 'Welcher Buchstabe fehlt?'), pic(item.e, item.sq),
-        h('div', { class: 'blankword' }, gap, tail),
+      s.append(ask('Cila shkronjë mungon?', 'Welcher Buchstabe fehlt?'), pic(item),
+        h('div', { class: 'blankword' }, p ? h('span', { class: 'pre-w' }, p + ' ') : null, gap, tail),
         h('div', { class: 'opts n4' }, shuffle([L, ...CONFUSE[L]]).map(o => optBtn(cap(o), null, b => {
-          if (o === L) { b.classList.add('is-ok'); gap.textContent = L; gap.classList.add('filled'); ok([h('b', null, h('mark', null, L), tail), deI(item.de)], item.sq); }
+          if (o === L) { b.classList.add('is-ok'); gap.textContent = L; gap.classList.add('filled'); ok([h('b', null, p ? p + ' ' : '', h('mark', null, L), tail), deI(item.de)], item.sq); }
           else { no(b); b.disabled = true; }
         }))));
     }
@@ -529,12 +641,12 @@ const GAMES = {
     title: 'Rrokjet', deTitle: 'Silbenpuzzle', tint: '--sea-soft',
     desc: 'Bashko rrokjet dhe krijo fjalën.', deDesc: 'Silben zum Wort zusammensetzen.',
     art: () => ['ba', 'na', 'ne'].map((t, i) => h('span', { class: 'a-tile s', style: `--tilt:${[-6, 4, -2][i]}deg` }, t)),
-    make: () => pick(SYLL, ROUNDS),
+    make: () => pick(SYLL.filter(x => inTopic(x.v)), ROUNDS),
     render(item, s) {
-      const { parts, v } = item;
+      const { pre, parts, v } = item;
       const extra = pick(ALL_SYL.filter(x => !parts.includes(x)), 1);
       const slots = parts.map(() => h('span', { class: 'slot' }));
-      const row = h('div', { class: 'slots', 'aria-label': `${parts.length} rrokje` }, slots);
+      const row = h('div', { class: 'slots', 'aria-label': `${parts.length} rrokje` }, pre ? h('span', { class: 'pre' }, pre) : null, slots);
       let k = 0;
       const tiles = shuffle([...parts, ...extra]).map((t, i) => h('button', {
         class: 'tile', type: 'button', style: `--tilt:${(i % 2 ? 1 : -1) * (2 + Math.floor(Math.random() * 4))}deg`,
@@ -546,18 +658,19 @@ const GAMES = {
           if (k === parts.length) { row.classList.add('done'); ok([h('b', null, v.sq), deI(v.de)], v.sq); }
         }
       }, t));
-      s.append(ask('Bashko rrokjet!', 'Tippe die Silben in der richtigen Reihenfolge an.'), pic(v.e, v.sq), row, h('div', { class: 'tiles' }, tiles));
+      s.append(ask('Bashko rrokjet!', 'Tippe die Silben in der richtigen Reihenfolge an.'), pic(v), row, h('div', { class: 'tiles' }, tiles));
     }
   },
   gjinia: {
     title: 'Ky apo kjo?', deTitle: 'Männlich oder weiblich', tint: '--plum-soft',
     desc: 'Ky qen, kjo mace. Gjej gjininë e fjalës.', deDesc: 'ky = männlich, kjo = weiblich',
     art: () => [h('span', { class: 'a-ky' }, 'ky'), h('span', { class: 'a-sl' }, '/'), h('span', { class: 'a-kjo' }, 'kjo')],
-    make: () => shuffle([...pick(VOCAB.filter(v => v.g === 'm'), 4), ...pick(VOCAB.filter(v => v.g === 'f'), 4)]),
+    supports: t => t === 'all' || VOCAB.some(v => v.t === t),
+    make: () => { const pool = VOCAB.filter(inTopic); return shuffle([...pick(pool.filter(v => v.g === 'm'), 4), ...pick(pool.filter(v => v.g === 'f'), 4)]); },
     render(item, s) {
       const right = item.g === 'm' ? 'ky' : 'kjo';
       const blank = h('span', { class: 'blank' }, '?');
-      s.append(ask('Ky apo kjo?', 'ky = männlich · kjo = weiblich'), pic(item.e, item.sq),
+      s.append(ask('Ky apo kjo?', 'ky = männlich · kjo = weiblich'), pic(item),
         h('p', { class: 'sentence' }, blank, ' ', item.sq),
         h('div', { class: 'opts n2' }, [['ky', 'männlich'], ['kjo', 'weiblich']].map(([w, d]) => {
           const btn = optBtn(cap(w), d, b => {
@@ -571,6 +684,7 @@ const GAMES = {
     }
   },
   zari: {
+    fixed: true, // same pronoun game for every topic
     title: 'Për kë është?', deTitle: 'Pronomen-Würfelspiel', tint: '--sky-soft',
     desc: 'Hidh zarat: torta është për të!', deDesc: 'Würfeln: Die Torte ist für sie!',
     art: () => [h('span', { class: 'a-die' }, h('span', { class: 'emo' }, '🎂')), h('span', { class: 'a-die' }, 'ajo')],
@@ -627,6 +741,7 @@ function startGame(id) {
   const def = GAMES[id];
   G = { id, items: def.make(), i: 0, score: 0, results: [] };
   $('#gTitle').textContent = def.title; $('#gDe').textContent = def.deTitle;
+  $('#gTheme').textContent = def.fixed ? '' : 'Tema: ' + topicById[topic].sq;
   if (!(history.state && history.state.play)) history.pushState({ play: true }, '');
   show('game'); renderRound();
 }
@@ -668,9 +783,10 @@ function no(btn) {
 function finish() {
   const n = G.items.length, s = G.score;
   const stars = s >= n ? 3 : s >= n - 2 ? 2 : 1;
-  if (stars > (prefs.best[G.id] || 0)) { prefs.best[G.id] = stars; save(); }
+  const key = bestKey(G.id);
+  if (stars > (prefs.best[key] || 0)) { prefs.best[key] = stars; save(); }
   const [title, de] = [['Mirë! Provo përsëri.', 'Gut! Versuch es nochmal.'], ['Shumë mirë!', 'Sehr gut!'], ['Shkëlqyeshëm!', 'Ausgezeichnet!']][stars - 1];
-  $('#doneGame').textContent = GAMES[G.id].title;
+  $('#doneGame').textContent = GAMES[G.id].title + (GAMES[G.id].fixed ? '' : ' · ' + topicById[topic].sq);
   $('#bigStars').replaceChildren(...[0, 1, 2].map(i => { const e = starSvg(i < stars); e.firstChild.style.animationDelay = (i * .18) + 's'; return e; }));
   $('#bigStars').setAttribute('aria-label', `${stars} nga 3 yje`);
   $('#doneTitle').textContent = title; $('#doneDe').textContent = de;
@@ -693,16 +809,23 @@ $('#homeBtn').append(svg(ICON.home));
 $('#bigStars').setAttribute('role', 'img');
 
 /* ---------- Home ---------- */
+function renderTopics() {
+  $('#topics').replaceChildren(...TOPICS.map(t => h('button', {
+    class: 'topic', type: 'button', 'aria-pressed': String(t.id === topic),
+    onclick: () => { topic = t.id; prefs.topic = t.id; save(); sfx.tap(); renderTopics(); renderGames(); }
+  }, h('span', { class: 'emo', 'aria-hidden': 'true' }, t.e), t.sq, h('span', { class: 'de' }, t.de))));
+}
 function renderGames() {
   $('#games').replaceChildren(...Object.entries(GAMES).map(([id, g]) => {
-    const best = prefs.best[id] || 0;
-    return h('button', { class: 'gcard', type: 'button', style: `--tint:var(${g.tint})`, onclick: () => startGame(id) },
+    const avail = !g.supports || g.supports(topic);
+    return h('button', { class: 'gcard', type: 'button', disabled: !avail, style: `--tint:var(${g.tint})`, onclick: () => startGame(id) },
       h('span', { class: 'gart', 'aria-hidden': 'true' }, g.art()),
       h('span', { class: 'gbody' },
-        h('span', { class: 'gtop' }, h('span', { class: 'gname' }, g.title), starRow(best)),
+        h('span', { class: 'gtop' }, h('span', { class: 'gname' }, g.title), starRow(prefs.best[bestKey(id)] || 0)),
         h('span', { class: 'de' }, g.deTitle),
         h('span', { class: 'gdesc' }, g.desc),
-        h('span', { class: 'de' }, g.deDesc)));
+        h('span', { class: 'de' }, g.deDesc),
+        avail ? null : h('span', { class: 'gnote' }, 'Kjo lojë nuk e ka këtë temë.', h('span', { class: 'de' }, 'Für dieses Thema nicht verfügbar.'))));
   }));
 }
 function showLetter(k, quiet) {
@@ -719,8 +842,9 @@ function showLetter(k, quiet) {
 $('#board').replaceChildren(...ABC.map((a, k) => h('button', { class: 'ltr' + (SPECIAL.has(a.l) ? ' special' : ''), type: 'button', 'aria-pressed': 'false', onclick: () => showLetter(k) }, cap(a.l))));
 showLetter(0, true);
 
-const words = new Set([...VOCAB, ...ABC].map(w => w.sq)).size;
-$('#stats').replaceChildren(...[`${Object.keys(GAMES).length} lojëra`, `${ABC.length} shkronja`, `${words} fjalë`].map(t => h('span', null, t)));
+const words = new Set([...WORDS, ...ABC].map(w => w.sq)).size;
+$('#stats').replaceChildren(...[`${Object.keys(GAMES).length} lojëra`, `${TOPICS.length - 1} tema`, `${ABC.length} shkronja`, `${words} fjalë`].map(t => h('span', null, t)));
+renderTopics();
 renderGames();
 syncToggles();
 
