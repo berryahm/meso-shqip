@@ -1,7 +1,8 @@
 # Mëso shqip! – installierbare App (PWA)
 
 Lernspiel für Kinder (5–10 Jahre): Standard-Albanisch mit Bilderquiz, Anfangsbuchstaben,
-Silbenpuzzle, ky/kjo und Pronomen-Würfelspiel. Läuft nach dem ersten Öffnen komplett offline.
+Silbenpuzzle, ky/kjo und Pronomen-Würfelspiel in 7 Themen, dazu ein gesprochener Modus für 1–4 Jahre.
+Läuft nach dem ersten Öffnen komplett offline.
 
 ## Inhalt des Ordners
 
@@ -42,6 +43,21 @@ Einstellungen bleiben auf dem Gerät gespeichert.
 
 Beim nächsten Öffnen lädt die App die neue Version im Hintergrund und zeigt
 „Ka një version të ri. · Rifresko“. Ein laufendes Spiel wird nicht unterbrochen.
+
+## Stimmen für die Kleinen (1–4 Jahre)
+
+Im Modus **1–4 vjeç** spricht die App: „Prek & dëgjo“, „Ku është?“ und „Si quhet?“.
+Die meisten Handys haben keine albanische Computerstimme, deshalb werden die Wörter
+einmal von einem Menschen aufgenommen (36 kurze Aufnahmen, ca. 10 Minuten).
+
+1. App öffnen → **1–4 vjeç** → „Për prindërit: incizo zërat“ (Rechenaufgabe als Eltern-Sperre).
+2. Bei jedem Wort 🎙 antippen, Wort sagen, ⏹ antippen. Die App schneidet Stille ab und gleicht die Lautstärke an.
+3. Diese Aufnahmen hört nur das Kind auf **diesem Gerät**.
+4. Damit **alle** Kinder die Stimme hören: „Shkarko zërat (ZIP)“ → den Ordner `audio/` aus dem ZIP
+   hier ins Projekt kopieren (ersetzt `audio/index.json`), `VERSION` in `sw.js` hochzählen, hochladen.
+
+Reihenfolge beim Abspielen: eigene Aufnahme auf dem Gerät → mitgelieferte Datei in `audio/` →
+albanische Gerätestimme (falls vorhanden). Fehlt alles, zeigt die App das Wort als Text für die Eltern.
 
 ## 4. Weg in die App-Stores (später)
 

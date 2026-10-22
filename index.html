@@ -28,6 +28,7 @@
   --sea:#0F7A8A; --sea-soft:#D9F0F2;
   --plum:#6E3CA3; --plum-soft:#ECE3F7;
   --sky-soft:#E1E9FF;
+  --b1:#FFBF1F; --b2:#5CC8D7; --b3:#B48EE8;
   --ok:#1A8F4C; --ok-soft:#DCF4E5; --no:#D9434A; --no-soft:#FDE3E3;
   --f-display:"Grandstander","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Andika","Verdana",system-ui,sans-serif;
@@ -233,6 +234,79 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
 .opt.long{font-size:clamp(.95rem,3vw,1.2rem)}
 .gtheme{display:block;font-family:var(--f-display);font-weight:600;font-size:.85rem;color:var(--flag)}
 
+/* Age switch */
+.ages{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--flag-deep)}
+.age{height:36px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--on-dark);font-family:var(--f-display);font-weight:800;font-size:.95rem;cursor:pointer}
+.age[aria-pressed="true"]{background:var(--on-dark);color:var(--flag)}
+
+/* Toddlers (1–4) */
+.tiny-cards{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.tiny-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tiny-cards .gcard:first-child{grid-column:auto}
+.age-tag{flex:none;padding:2px 10px;border-radius:999px;background:var(--ink);color:var(--on-dark);font-family:var(--f-display);font-weight:800;font-size:.8rem}
+.a-sound svg{width:44px;height:44px;color:var(--ink)}
+.a-mini{display:grid;place-items:center;width:52px;height:52px;border:2px solid var(--ink);border-radius:14px;background:var(--card);font-family:var(--f-emoji);font-size:30px}
+.a-mini.on{background:var(--ok-soft);border-color:var(--ok)}
+.a-dot{width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:var(--bc)}
+.voice-box{display:grid;gap:10px;margin-top:18px;padding:18px;border:2px dashed var(--ink-2);border-radius:var(--r);background:var(--card)}
+.voice-box p{margin:0}
+.vb-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--f-display);font-weight:800;font-size:1.2rem}
+.vb-top span{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.meter{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:var(--p,0%);background:var(--ok);transition:width .3s}
+.voice-box .btn{justify-self:start}
+.tiny-stage{display:grid;justify-items:center;gap:20px;padding-block:6px 36px;text-align:center}
+.tstars{display:flex;gap:6px}
+.tstars svg{width:34px;height:34px}
+.tgrid{display:grid;gap:14px;width:100%;max-width:640px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.tgrid.many{max-width:none}
+@media (min-width:700px){.tgrid.many{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.tpic{display:grid;place-items:center;align-content:center;gap:4px;aspect-ratio:1;max-width:100%;padding:6px;border:3px solid var(--ink);border-radius:28px;background:var(--card);box-shadow:0 6px 0 var(--ink);cursor:pointer}
+.tpic .emo{font-size:clamp(52px,15vw,104px)}
+.tpic small{font-family:var(--f-display);font-weight:600;font-size:.85rem;color:var(--ink-2)}
+.tpic.hit{animation:bounce .5s}
+.tpic.ok{background:var(--ok-soft);border-color:var(--ok);box-shadow:0 6px 0 var(--ok)}
+.tpic.no,.bubble.no{animation:shake .4s}
+.tbig{margin:0;font-family:var(--f-emoji);font-size:clamp(120px,36vw,200px);line-height:1;animation:pop .45s ease-out}
+.replay{display:grid;place-items:center;width:84px;height:84px;padding:0;border:3px solid var(--ink);border-radius:50%;background:var(--sun);box-shadow:0 6px 0 var(--ink);color:var(--ink);cursor:pointer}
+.replay svg{width:44px;height:44px}
+.replay:active,.bubble:active,.tpic:active{transform:translateY(3px)}
+.replay.alt{background:var(--card)}
+.say-text{margin:0;font-family:var(--f-display);font-weight:800;font-size:1.6rem}
+.bubbles{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(14px,4vw,28px)}
+.bubble{display:grid;place-items:center;align-content:center;gap:2px;width:clamp(92px,26vw,130px);aspect-ratio:1;padding:0;border:4px solid var(--ink);border-radius:50%;background:var(--bc);box-shadow:0 7px 0 var(--ink);color:var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.bubble svg{width:40%;height:auto}
+.bubble .lbl{font-family:var(--f-display);font-weight:800;font-size:.95rem}
+.bubble.talking{transform:scale(1.14);box-shadow:0 0 0 8px var(--ink),0 7px 0 var(--ink)}
+.bubble.ok{background:var(--ok-soft);border-color:var(--ok);box-shadow:0 7px 0 var(--ok)}
+.tabs-tiny{display:flex;gap:12px;justify-content:center}
+.tab-tiny{width:72px;height:72px;border:3px solid var(--ink);border-radius:22px;background:var(--card);box-shadow:0 4px 0 var(--ink);font-family:var(--f-emoji);font-size:38px;cursor:pointer}
+.tab-tiny[aria-pressed="true"]{background:var(--sun)}
+.tiny-hint{max-width:46ch;margin:0;color:var(--ink-2);font-size:.95rem}
+.tiny-hint button{border:0;background:none;padding:0;color:var(--flag);font-weight:700;text-decoration:underline;cursor:pointer}
+
+/* Parents: voice recording */
+.studio-intro{display:grid;gap:10px;margin-bottom:18px}
+.studio-intro p{margin:0;max-width:62ch}
+.studio-msg{min-height:1.5em;font-weight:700;color:var(--no)}
+.clips{display:grid;gap:10px;margin:0;padding:0 0 30px;list-style:none}
+.clip{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid var(--line);border-radius:16px;background:var(--card)}
+.clip > .emo{flex:none;width:44px;font-size:32px;text-align:center}
+.clip .txt{flex:1;min-width:0}
+.clip b{font-family:var(--f-display);font-size:1.2rem;margin-right:6px}
+.chip{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--line);color:var(--ink-2);font-size:.75rem;font-weight:700;white-space:nowrap}
+.chip.mine{background:var(--ok-soft);color:var(--ok)}
+.chip.app{background:var(--sky-soft);color:var(--sea)}
+.clip .iconbtn:disabled{opacity:.35;cursor:default}
+.iconbtn.rec{background:var(--no-soft)}
+.iconbtn.recording{background:var(--no);color:var(--on-dark);animation:pulse 1s infinite}
+.gate{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--ink) 60%,transparent)}
+.gate-card{display:grid;gap:12px;width:100%;max-width:380px;padding:22px;border:2px solid var(--ink);border-radius:24px;background:var(--card);text-align:center}
+.gate-card b{font-family:var(--f-display);font-size:1.3rem}
+.gate-q{margin:0;font-family:var(--f-display);font-weight:800;font-size:2rem}
+@keyframes bounce{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-14px) scale(1.06)}70%{transform:translateY(0) scale(.97)}}
+@keyframes pulse{50%{box-shadow:0 0 0 7px var(--no-soft)}}
+
 /* Result */
 .done{display:grid;justify-items:center;text-align:center;gap:8px;padding-block:calc(48px + env(safe-area-inset-top,0px)) 40px}
 .done-game{font-family:var(--f-display);font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;font-size:.9rem}
@@ -258,7 +332,7 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
   <header class="hero">
     <div class="wrap">
       <div class="hero-top">
-        <span class="eyebrow">Për fëmijë 5–10 vjeç <span class="de de-inline">· für Kinder von 5 bis 10</span></span>
+        <div class="ages" role="group" aria-label="Mosha e fëmijës"><button class="age" type="button" data-age="tiny" aria-pressed="false">1–4 vjeç</button><button class="age" type="button" data-age="big" aria-pressed="true">5–10 vjeç</button></div>
         <div class="toggles">
           <button class="pill install-btn" type="button" hidden>Instalo</button>
           <button class="pill de-btn" type="button" aria-pressed="true" title="Deutsche Hilfe ein/aus">DE</button>
@@ -278,7 +352,23 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
   </header>
 
   <main>
-    <section class="sec">
+    <section class="sec for-tiny" hidden>
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Të vegjlit</h2><span class="tag">1–4 vjeç · aplikacioni flet</span>
+          <p class="note">Fëmija dëgjon, shikon dhe prek. Nuk duhet të dijë të lexojë.<span class="de">Für die Kleinen: Die App spricht, das Kind hört zu und tippt. Lesen ist nicht nötig.</span></p>
+        </div>
+        <div class="tiny-cards" id="tinyCards"></div>
+        <div class="voice-box">
+          <div class="vb-top">Zërat <span id="voiceCount"></span></div>
+          <div class="meter"><i id="voiceMeter"></i></div>
+          <p>Shumica e telefonave nuk kanë zë shqip. Incizoni fjalët një herë me zërin tuaj, pastaj fëmija dëgjon zërin e prindit.<span class="de">Die meisten Handys haben keine albanische Stimme. Nehmt die Wörter einmal selbst auf, dann hört das Kind eure Stimme.</span></p>
+          <button class="btn alt open-studio" type="button">Për prindërit: incizo zërat</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec for-big">
       <div class="wrap">
         <div class="sec-head">
           <h2>Lojërat</h2><span class="tag">Zgjidh temën dhe lojën</span>
@@ -289,7 +379,7 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
       </div>
     </section>
 
-    <section class="sec">
+    <section class="sec for-big">
       <div class="wrap">
         <div class="sec-head">
           <h2>Abetarja</h2><span class="tag">36 shkronja</span>
@@ -302,7 +392,7 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
       </div>
     </section>
   </main>
-  <footer class="foot wrap">Mëso shqip · v0.3 · funksionon edhe pa internet <span class="de de-inline">· funktioniert auch offline</span></footer>
+  <footer class="foot wrap">Mëso shqip · v0.4 · funksionon edhe pa internet <span class="de de-inline">· funktioniert auch offline</span></footer>
 </section>
 
 <section id="game" class="screen" hidden>
@@ -334,6 +424,44 @@ mark{background:var(--sun-soft);color:var(--flag);border-radius:6px;padding:0 2p
     </div>
   </div>
 </section>
+
+<section id="tiny" class="screen" hidden>
+  <div class="wrap">
+    <div class="gbar">
+      <button class="iconbtn go-home" type="button" aria-label="Kthehu"></button>
+      <div class="gbar-title"><h2 id="tTitle"></h2><span class="de" id="tDe"></span></div>
+      <button class="iconbtn sound-btn" type="button" aria-pressed="true" aria-label="Zëri"></button>
+    </div>
+    <div class="tiny-stage" id="tStage"></div>
+  </div>
+</section>
+
+<section id="studio" class="screen" hidden>
+  <div class="wrap">
+    <div class="gbar">
+      <button class="iconbtn go-home" type="button" aria-label="Kthehu"></button>
+      <div class="gbar-title"><h2>Zërat për të vegjlit</h2><span class="de">Stimmen aufnehmen (für Eltern)</span></div>
+      <span class="count" id="stCount"></span>
+    </div>
+    <div class="studio-intro">
+      <p>Prekni mikrofonin, thoni fjalën qartë dhe me gëzim, pastaj prekni katrorin. Zëri ruhet vetëm në këtë pajisje.<span class="de">Mikrofon antippen, das Wort deutlich und fröhlich sagen, dann das Quadrat antippen. Die Stimme bleibt nur auf diesem Gerät.</span></p>
+      <div class="meter"><i id="stMeter"></i></div>
+      <p class="studio-msg" id="stMsg" role="status"></p>
+      <p>Që ta dëgjojnë të gjithë fëmijët: shkarkoni ZIP-in dhe vendoseni te dosja <code>audio/</code> e aplikacionit.<span class="de">Damit alle Kinder diese Stimme hören: ZIP herunterladen und in den Ordner audio/ der App legen.</span></p>
+      <button class="btn alt" id="stExport" type="button">Shkarko zërat (ZIP)</button>
+    </div>
+    <ul class="clips" id="clips"></ul>
+  </div>
+</section>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateQ" hidden>
+  <div class="gate-card">
+    <b>Për prindërit</b><span class="de">Nur für Eltern</span>
+    <p class="gate-q" id="gateQ"></p>
+    <div class="opts n2" id="gateOpts"></div>
+    <button class="btn alt" id="gateClose" type="button">Mbyll</button>
+  </div>
+</div>
 
 <div class="toast" id="toast" role="status" hidden>
   <span>Ka një version të ri.</span>
@@ -416,6 +544,28 @@ const NUMS = ['një','dy','tre','katër','pesë','gjashtë','shtatë','tetë','n
     'elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn','achtzehn','neunzehn','zwanzig'][i] }));
 const WORDS = [...VOCAB, ...COLORS, ...NUMS];
 const byWord = Object.fromEntries(WORDS.map(v => [v.sq, v]));
+
+// Toddlers (1–4) hear the definite form, the way adults talk to small children ("Ku është lopa?").
+// id = file name in audio/ (ë → e, ç → c)
+const slug = s => s.toLowerCase().replace(/ë/g, 'e').replace(/ç/g, 'c').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const TINY = [
+  ['🐄','lopa','die Kuh','k'], ['🐕','qeni','der Hund','k'], ['🐈','macja','die Katze','k'], ['🐴','kali','das Pferd','k'],
+  ['🐔','pula','das Huhn','k'], ['🐑','delja','das Schaf','k'], ['🐟','peshku','der Fisch','k'], ['🐦','zogu','der Vogel','k'],
+  ['🦁','luani','der Löwe','k'], ['🐯','tigri','der Tiger','k'], ['🐘','elefanti','der Elefant','k'], ['🦊','dhelpra','der Fuchs','k'],
+  ['🐻','ariu','der Bär','k'], ['🐭','miu','die Maus','k'], ['🐰','lepuri','der Hase','k'], ['🐸','zhaba','der Frosch','k'],
+  ['🦋','flutura','der Schmetterling','k'], ['🐒','majmuni','der Affe','k'],
+  ['👩','nëna','die Mama','s'], ['👨','babai','der Papa','s'], ['👵','gjyshja','die Oma','s'], ['👴','gjyshi','der Opa','s'],
+  ['🍎','molla','der Apfel','s'], ['🍌','bananja','die Banane','s'], ['🍞','buka','das Brot','s'], ['🥛','qumështi','die Milch','s'],
+  ['💧','uji','das Wasser','s'], ['⚽','topi','der Ball','s'], ['🚗','makina','das Auto','s'], ['🌸','lulja','die Blume','s'],
+  ['☀️','dielli','die Sonne','s'], ['👟','këpuca','der Schuh','s']
+].map(([e, sq, de, g]) => ({ e, sq, de, g, id: slug(sq), tts: sq }));
+const PHRASES = [
+  { id: 'ku-eshte', e: '❓', sq: 'Ku është', tts: 'Ku është', de: 'Wo ist … (das Wort folgt danach)' },
+  { id: 'si-quhet', e: '❔', sq: 'Si quhet?', tts: 'Si quhet?', de: 'Wie heisst das?' },
+  { id: 'bravo', e: '🎉', sq: 'Bravo!', tts: 'Bravo!', de: 'Bravo!' },
+  { id: 'provo-perseri', e: '🔁', sq: 'Provo përsëri!', tts: 'Provo përsëri!', de: 'Versuch es nochmal!' }
+];
+const CLIPS = [...PHRASES, ...TINY];
 
 // The 36 letters of the Albanian alphabet, each with an example word
 const ABC = [
@@ -508,7 +658,12 @@ const ICON = {
   home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg>',
   sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
   mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
-  next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+  next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
+  stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>',
+  again: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>'
 };
 const STAR = 'M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z';
 const starSvg = on => svg(`<svg viewBox="0 0 24 24" aria-hidden="true"><path class="${on ? 'star-on' : 'star-off'}" d="${STAR}"/></svg>`);
@@ -561,6 +716,144 @@ function say(text) {
   try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = sqVoice; u.lang = sqVoice.lang; u.rate = .85; speechSynthesis.speak(u); } catch (e) {}
 }
 const speakBtn = text => h('button', { class: 'speak', type: 'button', 'aria-label': 'Dëgjo', onclick: () => say(text) }, svg(ICON.sound));
+
+/* ---------- Voices for toddlers: own recordings > voices shipped in audio/ > the device's Albanian voice ---------- */
+function audioCtx() {
+  actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+let recState = null;
+const Voice = (() => {
+  let db = null, mine = new Set(), shipped = new Set(), token = 0, source = null;
+  const buffers = new Map();
+  const openDb = () => new Promise((res, rej) => {
+    const r = indexedDB.open('meso-shqip-audio', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('clips');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  async function store(mode, fn) {
+    db = db || await openDb();
+    return new Promise((res, rej) => {
+      const t = db.transaction('clips', mode), req = fn(t.objectStore('clips'));
+      t.oncomplete = () => res(req && req.result); t.onerror = () => rej(t.error);
+    });
+  }
+  async function init() {
+    try { shipped = new Set(await (await fetch('audio/index.json')).json()); } catch (e) {}
+    try { mine = new Set(await store('readonly', st => st.getAllKeys())); } catch (e) {}
+  }
+  const hasClip = id => mine.has(id) || shipped.has(id);
+  const has = id => hasClip(id) || !!sqVoice;
+  async function getBuffer(id) {
+    if (buffers.has(id)) return buffers.get(id);
+    let data = null;
+    if (mine.has(id)) { const blob = await store('readonly', st => st.get(id)); if (blob) data = await blob.arrayBuffer(); }
+    if (!data && shipped.has(id)) { const r = await fetch(`audio/${id}.wav`); if (r.ok) data = await r.arrayBuffer(); }
+    if (!data) return null;
+    const buf = await audioCtx().decodeAudioData(data);
+    buffers.set(id, buf);
+    return buf;
+  }
+  function cancel() {
+    token++;
+    try { if (source) source.stop(); } catch (e) {}
+    source = null;
+    try { speechSynthesis.cancel(); } catch (e) {}
+  }
+  async function playOne(it) {
+    const buf = await getBuffer(it.id).catch(() => null);
+    if (buf) return new Promise(res => {
+      const c = audioCtx(), src = c.createBufferSource();
+      src.buffer = buf; src.connect(c.destination); src.onended = () => res(); source = src; src.start();
+    });
+    if (sqVoice && it.tts) return Promise.race([
+      new Promise(res => { const u = new SpeechSynthesisUtterance(it.tts); u.voice = sqVoice; u.lang = sqVoice.lang; u.rate = .8; u.onend = u.onerror = () => res(); speechSynthesis.speak(u); }),
+      new Promise(res => setTimeout(res, 4000))
+    ]);
+  }
+  // Plays clips one after another; a newer call cancels it. Resolves true when it ran to the end.
+  async function seq(items, onEach) {
+    cancel();
+    const my = token;
+    if (!prefs.sound) return false;
+    for (let i = 0; i < items.length; i++) {
+      if (my !== token) return false;
+      if (onEach) onEach(i);
+      await playOne(items[i]);
+      if (my !== token) return false;
+      await new Promise(r => setTimeout(r, items[i].gap ?? 250));
+    }
+    if (my === token && onEach) onEach(-1);
+    return my === token;
+  }
+  async function startRecording() {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    const rec = new MediaRecorder(stream), chunks = [];
+    rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    rec.start();
+    return { stop: () => new Promise(res => {
+      rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); res(new Blob(chunks, { type: rec.mimeType || 'audio/webm' })); };
+      rec.stop();
+    }) };
+  }
+  // Any recording → mono 22 kHz WAV, silence trimmed, volume evened out (plays on every phone)
+  async function toWav(blob) {
+    const src = await audioCtx().decodeAudioData(await blob.arrayBuffer());
+    const n = src.length, mono = new Float32Array(n);
+    for (let c = 0; c < src.numberOfChannels; c++) { const d = src.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / src.numberOfChannels; }
+    let peak = 0;
+    for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(mono[i]));
+    if (peak < 0.02) throw new Error('quiet');
+    const thr = peak * 0.06, pad = Math.round(src.sampleRate * 0.08);
+    let a = 0, b = n - 1;
+    while (a < n && Math.abs(mono[a]) < thr) a++;
+    while (b > a && Math.abs(mono[b]) < thr) b--;
+    a = Math.max(0, a - pad); b = Math.min(n, b + pad * 2);
+    const rate = 22050, outLen = Math.max(1, Math.ceil((b - a) * rate / src.sampleRate));
+    const off = new OfflineAudioContext(1, outLen, rate);
+    const tmp = off.createBuffer(1, b - a, src.sampleRate);
+    tmp.copyToChannel(mono.subarray(a, b), 0);
+    const node = off.createBufferSource(); node.buffer = tmp; node.connect(off.destination); node.start();
+    const out = (await off.startRendering()).getChannelData(0), gain = 0.9 / peak;
+    const v = new DataView(new ArrayBuffer(44 + out.length * 2));
+    const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    str(0, 'RIFF'); v.setUint32(4, 36 + out.length * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true);
+    v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, out.length * 2, true);
+    for (let i = 0; i < out.length; i++) { const s = Math.max(-1, Math.min(1, out[i] * gain)); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true); }
+    return new Blob([v], { type: 'audio/wav' });
+  }
+  async function save(id, wav) { await store('readwrite', st => st.put(wav, id)); mine.add(id); buffers.delete(id); }
+  async function remove(id) { await store('readwrite', st => st.delete(id)); mine.delete(id); buffers.delete(id); }
+  // ZIP (stored, no compression) with audio/<id>.wav and audio/index.json, ready for the app folder
+  const crc32 = u8 => { let crc = -1; for (let i = 0; i < u8.length; i++) { let c = (crc ^ u8[i]) & 0xFF; for (let k = 0; k < 8; k++) c = c & 1 ? (c >>> 1) ^ 0xEDB88320 : c >>> 1; crc = (crc >>> 8) ^ c; } return (crc ^ -1) >>> 0; };
+  async function exportZip() {
+    const ids = [...mine].sort(), enc = new TextEncoder(), files = [];
+    for (const id of ids) files.push({ name: `audio/${id}.wav`, data: new Uint8Array(await (await store('readonly', st => st.get(id))).arrayBuffer()) });
+    files.push({ name: 'audio/index.json', data: enc.encode(JSON.stringify([...new Set([...shipped, ...ids])].sort(), null, 1) + '\n') });
+    const parts = [], central = [];
+    let offset = 0;
+    for (const f of files) {
+      const name = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+      const lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(12, 0x21, true);
+      lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true); lh.setUint16(26, name.length, true);
+      parts.push(lh, name, f.data);
+      const ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(14, 0x21, true);
+      ch.setUint32(16, crc, true); ch.setUint32(20, size, true); ch.setUint32(24, size, true); ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+      central.push(ch, name);
+      offset += 30 + name.length + size;
+    }
+    const cdSize = central.reduce((s, p) => s + p.byteLength, 0), end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+    end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, end], { type: 'application/zip' });
+  }
+  return { init, has, hasClip, isMine: id => mine.has(id), isShipped: id => shipped.has(id), mineCount: () => mine.size,
+    seq, cancel, startRecording, toWav, save, remove, exportZip };
+})();
 
 /* ---------- Toggles ---------- */
 function syncToggles() {
@@ -731,7 +1024,9 @@ const PRAISE = ['Bravo!', 'Shumë mirë!', 'Të lumtë!', 'Saktë!', 'Shkëlqyes
 const RETRY = ['Provo përsëri!', 'Pothuajse!', 'Edhe një herë!'];
 
 function show(id) {
-  for (const s of ['home', 'game', 'done']) $('#' + s).hidden = s !== id;
+  Voice.cancel();
+  if (recState && id !== 'studio') stopRec();
+  for (const s of ['home', 'game', 'done', 'tiny', 'studio']) $('#' + s).hidden = s !== id;
   document.querySelector('meta[name="theme-color"]').setAttribute('content', id === 'home' ? '#D2232A' : '#F3F5FA');
   window.scrollTo(0, 0);
 }
@@ -799,16 +1094,214 @@ $('#next').addEventListener('click', () => { if (++G.i >= G.items.length) finish
 $('#again').addEventListener('click', () => startGame(G.id));
 function goHome() {
   if (history.state && history.state.play) history.back(); // popstate below shows the list
-  else { renderGames(); show('home'); }
+  else { renderGames(); renderTiny(); show('home'); }
 }
-window.addEventListener('popstate', () => { if ($('#home').hidden) { renderGames(); show('home'); } });
+window.addEventListener('popstate', () => { if ($('#home').hidden) { renderGames(); renderTiny(); show('home'); } });
 if (history.state && history.state.play) history.replaceState(null, '');
 $('#toHome').addEventListener('click', goHome);
 $('#homeBtn').addEventListener('click', goHome);
 $('#homeBtn').append(svg(ICON.home));
 $('#bigStars').setAttribute('role', 'img');
 
+/* ---------- Toddlers (1–4): everything is spoken ---------- */
+const TINY_ROUNDS = 6;
+let T = null;
+const tinyStars = (n, total) => h('div', { class: 'tstars', 'aria-hidden': 'true' }, Array.from({ length: total }, (_, i) => starSvg(i < n)));
+const TINY_GAMES = {
+  listen: {
+    title: 'Prek & dëgjo', de: 'Tippen und hören', age: '1–2 vjeç', tint: '--sun-soft',
+    desc: 'Prek një foto dhe dëgjo fjalën.', deDesc: 'Bild antippen und das Wort hören.',
+    art: () => [h('span', { class: 'a-emo' }, '🐄'), h('span', { class: 'a-sound' }, svg(ICON.sound))],
+    start: () => tinyListen('k')
+  },
+  where: {
+    title: 'Ku është?', de: 'Wo ist …?', age: '2–3 vjeç', tint: '--sea-soft',
+    desc: 'Dëgjo fjalën dhe gjej foton.', deDesc: 'Wort hören, das richtige Bild antippen.',
+    art: () => ['🐕', '🐄', '🐈'].map((e, i) => h('span', { class: 'a-mini' + (i === 1 ? ' on' : '') }, e)),
+    start: () => tinyQuiz('where')
+  },
+  name: {
+    title: 'Si quhet?', de: 'Wie heisst das?', age: '3–4 vjeç', tint: '--plum-soft',
+    desc: 'Shiko foton, dëgjo tri fjalë dhe zgjidh.', deDesc: 'Bild anschauen, drei Wörter hören, das richtige antippen.',
+    art: () => [h('span', { class: 'a-emo' }, '🐄'), ...[1, 2, 3].map(k => h('span', { class: 'a-dot', style: `--bc:var(--b${k})` }))],
+    start: () => tinyQuiz('name')
+  }
+};
+function openTiny(id) {
+  const g = TINY_GAMES[id];
+  $('#tTitle').textContent = g.title; $('#tDe').textContent = g.de;
+  if (!(history.state && history.state.play)) history.pushState({ play: true }, '');
+  show('tiny'); audioCtx(); g.start();
+}
+// Shown to parents while words have no voice yet
+function voiceHint(words) {
+  if (words.every(w => Voice.has(w.id))) return null;
+  return h('p', { class: 'tiny-hint' }, 'Disa fjalë nuk kanë ende zë. ', h('button', { type: 'button', onclick: openGate }, 'Incizoni zërat'),
+    h('span', { class: 'de' }, 'Einige Wörter haben noch keine Stimme. Eltern können sie aufnehmen.'));
+}
+function tinyListen(group) {
+  const words = TINY.filter(w => w.g === group);
+  $('#tStage').replaceChildren(
+    h('div', { class: 'tabs-tiny', role: 'group', 'aria-label': 'Grupi' }, [['k', '🐄', 'Kafshët'], ['s', '🍎', 'Gjërat']].map(([g, e, label]) =>
+      h('button', { class: 'tab-tiny', type: 'button', 'aria-pressed': String(g === group), 'aria-label': label, onclick: () => { sfx.tap(); tinyListen(g); } }, e))),
+    h('div', { class: 'tgrid many' }, words.map(w => h('button', { class: 'tpic', type: 'button', 'aria-label': w.sq, onclick: ev => {
+      const b = ev.currentTarget; b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
+      audioCtx();
+      if (!Voice.has(w.id)) sfx.tap();
+      Voice.seq([w]);
+    } }, h('span', { class: 'emo' }, w.e), h('small', null, w.sq)))),
+    voiceHint(words));
+}
+function tinyQuiz(kind) {
+  T = { kind, items: pick(TINY, TINY_ROUNDS), i: 0, done: 0 };
+  tinyRound();
+}
+function tinyRound() {
+  const target = T.items[T.i];
+  const opts = shuffle([target, ...pick(TINY.filter(w => w !== target && w.e !== target.e), 2)]);
+  const stage = $('#tStage');
+  T.solved = false;
+  let prompt;
+  if (T.kind === 'where') {
+    prompt = () => Voice.seq([{ ...PHRASES[0], gap: 80 }, target]);
+    stage.replaceChildren(tinyStars(T.done, T.items.length),
+      h('button', { class: 'replay', type: 'button', 'aria-label': 'Dëgjo përsëri', onclick: () => { audioCtx(); prompt(); } }, svg(ICON.sound)),
+      Voice.has(target.id) ? null : h('p', { class: 'say-text' }, `Ku është ${target.sq}?`),
+      h('div', { class: 'tgrid' }, opts.map(w => h('button', { class: 'tpic', type: 'button', 'aria-label': w.sq, onclick: ev => tinyPick(ev.currentTarget, w === target, prompt) }, h('span', { class: 'emo' }, w.e)))),
+      voiceHint([PHRASES[0], target]));
+  } else {
+    const bubbles = opts.map((w, k) => h('button', { class: 'bubble', type: 'button', style: `--bc:var(--b${k + 1})`, 'aria-label': `Fjala ${k + 1}`, onclick: ev => tinyPick(ev.currentTarget, w === target, prompt) },
+      svg(ICON.sound), Voice.has(w.id) ? null : h('span', { class: 'lbl' }, w.sq)));
+    // "Si quhet?" – then every bubble lights up while its word is spoken
+    prompt = () => Voice.seq([{ ...PHRASES[1], gap: 450 }, ...opts.map(w => ({ ...w, gap: 550 }))], i => bubbles.forEach((b, k) => b.classList.toggle('talking', i - 1 === k)));
+    stage.replaceChildren(tinyStars(T.done, T.items.length),
+      h('p', { class: 'tbig', role: 'img', 'aria-label': 'Foto' }, target.e),
+      h('div', { class: 'bubbles' }, bubbles),
+      h('button', { class: 'replay alt', type: 'button', 'aria-label': 'Dëgjo përsëri', onclick: () => { audioCtx(); prompt(); } }, svg(ICON.sound)),
+      voiceHint([PHRASES[1], ...opts]));
+  }
+  setTimeout(() => { if (!$('#tiny').hidden && T && !T.solved) prompt(); }, 450);
+}
+function tinyPick(btn, right, prompt) {
+  if (!T || T.solved) return;
+  audioCtx();
+  document.querySelectorAll('.bubble.talking').forEach(b => b.classList.remove('talking'));
+  if (right) {
+    T.solved = true; T.done++;
+    btn.classList.add('ok', 'hit'); sfx.ok();
+    $('#tStage .tstars').replaceWith(tinyStars(T.done, T.items.length));
+    Voice.seq([PHRASES[2]]);
+    const myT = T, myI = T.i;
+    setTimeout(() => {
+      if (T !== myT || T.i !== myI || $('#tiny').hidden) return;
+      if (++T.i >= T.items.length) tinyEnd(); else tinyRound();
+    }, 1700);
+  } else {
+    btn.classList.remove('no'); void btn.offsetWidth; btn.classList.add('no'); sfx.no();
+    Voice.seq([{ ...PHRASES[3], gap: 400 }]).then(done => { if (done && T && !T.solved) prompt(); });
+  }
+}
+function tinyEnd() {
+  sfx.win(); Voice.seq([PHRASES[2]]);
+  $('#tStage').replaceChildren(
+    h('div', { class: 'bigstars', role: 'img', 'aria-label': 'Bravo!' }, [0, 1, 2].map(i => { const e = starSvg(true); e.firstChild.style.animationDelay = (i * .18) + 's'; return e; })),
+    h('p', { class: 'tbig', 'aria-hidden': 'true' }, '🎉'),
+    h('div', { class: 'done-actions' },
+      h('button', { class: 'replay', type: 'button', 'aria-label': 'Luaj përsëri', onclick: () => tinyQuiz(T.kind) }, svg(ICON.again)),
+      h('button', { class: 'replay alt', type: 'button', 'aria-label': 'Kthehu', onclick: goHome }, svg(ICON.home))));
+}
+
+/* ---------- Parents: gate and voice recording ---------- */
+function openGate() {
+  const a = 3 + Math.floor(Math.random() * 7), b = 3 + Math.floor(Math.random() * 7), sum = a + b;
+  $('#gateQ').replaceChildren(`Sa bëjnë ${a} + ${b}?`, h('span', { class: 'de' }, `Wie viel ist ${a} + ${b}?`));
+  const wrong = shuffle([sum - 2, sum - 1, sum + 1, sum + 2, sum + 10]).slice(0, 3);
+  $('#gateOpts').replaceChildren(...shuffle([sum, ...wrong]).map(n => h('button', { class: 'opt', type: 'button', onclick: () => {
+    $('#gate').hidden = true;
+    if (n === sum) openStudio();
+  } }, n)));
+  $('#gate').hidden = false;
+}
+function openStudio() {
+  if (!(history.state && history.state.play)) history.pushState({ play: true }, '');
+  show('studio'); setStudioMsg('');
+  $('#clips').replaceChildren(...CLIPS.map(clipRow));
+  updateStudioCount();
+}
+function setStudioMsg(sq, de) { $('#stMsg').replaceChildren(sq || '', de ? h('span', { class: 'de' }, de) : ''); }
+function updateStudioCount() {
+  const have = CLIPS.filter(w => Voice.hasClip(w.id)).length;
+  $('#stCount').textContent = `${have} / ${CLIPS.length}`;
+  $('#stMeter').style.setProperty('--p', (have / CLIPS.length * 100) + '%');
+  $('#stExport').disabled = Voice.mineCount() === 0;
+}
+function clipRow(w) {
+  const own = Voice.isMine(w.id), shipped = Voice.isShipped(w.id);
+  const li = h('li', { class: 'clip' },
+    h('span', { class: 'emo', 'aria-hidden': 'true' }, w.e),
+    h('span', { class: 'txt' }, h('b', null, w.sq), h('span', { class: 'chip' + (own ? ' mine' : shipped ? ' app' : '') }, own ? 'Zëri juaj' : shipped ? 'Në aplikacion' : 'Mungon'), h('span', { class: 'de' }, w.de)),
+    h('button', { class: 'iconbtn', type: 'button', 'aria-label': 'Dëgjo', disabled: !(own || shipped), onclick: () => { audioCtx(); Voice.seq([w]); } }, svg(ICON.play)),
+    h('button', { class: 'iconbtn rec', type: 'button', 'aria-label': 'Incizo', onclick: ev => toggleRec(w, ev.currentTarget) }, svg(ICON.mic)),
+    own ? h('button', { class: 'iconbtn', type: 'button', 'aria-label': 'Fshi', onclick: async () => { await Voice.remove(w.id); li.replaceWith(clipRow(w)); updateStudioCount(); } }, svg(ICON.trash)) : null);
+  return li;
+}
+async function toggleRec(w, btn) {
+  if (recState) { const same = recState.w === w; await stopRec(); if (same) return; }
+  setStudioMsg('');
+  Voice.cancel();
+  if (!window.MediaRecorder || !navigator.mediaDevices) { setStudioMsg('Ky shfletues nuk mund të incizojë.', 'Dieser Browser kann nicht aufnehmen.'); return; }
+  try {
+    const rec = await Voice.startRecording();
+    btn.classList.add('recording'); btn.replaceChildren(svg(ICON.stop)); btn.setAttribute('aria-label', 'Ndalo');
+    recState = { w, rec, btn, timer: setTimeout(stopRec, 5000) };
+  } catch (e) { setStudioMsg('Mikrofoni nuk u lejua ose nuk u gjet.', 'Mikrofon nicht erlaubt oder nicht gefunden.'); }
+}
+async function stopRec() {
+  const st = recState;
+  if (!st) return;
+  recState = null; clearTimeout(st.timer);
+  try {
+    const wav = await Voice.toWav(await st.rec.stop());
+    await Voice.save(st.w.id, wav);
+    const row = st.btn.closest('li');
+    if (row) row.replaceWith(clipRow(st.w));
+    updateStudioCount();
+    if (!$('#studio').hidden) Voice.seq([st.w]);
+  } catch (e) {
+    setStudioMsg('Nuk u dëgjua asgjë. Provoni përsëri, pak më fort.', 'Nichts gehört. Bitte nochmal, etwas lauter.');
+    st.btn.classList.remove('recording'); st.btn.replaceChildren(svg(ICON.mic)); st.btn.setAttribute('aria-label', 'Incizo');
+  }
+}
+$('#stExport').addEventListener('click', async () => {
+  const zip = await Voice.exportZip();
+  const a = h('a', { href: URL.createObjectURL(zip), download: 'meso-shqip-zerat.zip' });
+  document.body.append(a); a.click(); a.remove();
+});
+$('#gateClose').addEventListener('click', () => { $('#gate').hidden = true; });
+document.querySelectorAll('.open-studio').forEach(b => b.addEventListener('click', openGate));
+document.querySelectorAll('.go-home').forEach(b => { b.append(svg(ICON.home)); b.addEventListener('click', goHome); });
+
 /* ---------- Home ---------- */
+function renderTiny() {
+  $('#tinyCards').replaceChildren(...Object.entries(TINY_GAMES).map(([id, g]) =>
+    h('button', { class: 'gcard', type: 'button', style: `--tint:var(${g.tint})`, onclick: () => openTiny(id) },
+      h('span', { class: 'gart', 'aria-hidden': 'true' }, g.art()),
+      h('span', { class: 'gbody' },
+        h('span', { class: 'gtop' }, h('span', { class: 'gname' }, g.title), h('span', { class: 'age-tag' }, g.age)),
+        h('span', { class: 'de' }, g.de),
+        h('span', { class: 'gdesc' }, g.desc),
+        h('span', { class: 'de' }, g.deDesc)))));
+  const have = CLIPS.filter(w => Voice.hasClip(w.id)).length;
+  $('#voiceCount').textContent = `${have} / ${CLIPS.length}`;
+  $('#voiceMeter').style.setProperty('--p', (have / CLIPS.length * 100) + '%');
+}
+function setAge(a) {
+  prefs.age = a; save();
+  document.querySelectorAll('.age').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.age === a)));
+  document.querySelectorAll('.for-big').forEach(el => { el.hidden = a !== 'big'; });
+  document.querySelectorAll('.for-tiny').forEach(el => { el.hidden = a !== 'tiny'; });
+}
+document.querySelectorAll('.age').forEach(b => b.addEventListener('click', () => { sfx.tap(); setAge(b.dataset.age); }));
 function renderTopics() {
   $('#topics').replaceChildren(...TOPICS.map(t => h('button', {
     class: 'topic', type: 'button', 'aria-pressed': String(t.id === topic),
@@ -846,7 +1339,10 @@ const words = new Set([...WORDS, ...ABC].map(w => w.sq)).size;
 $('#stats').replaceChildren(...[`${Object.keys(GAMES).length} lojëra`, `${TOPICS.length - 1} tema`, `${ABC.length} shkronja`, `${words} fjalë`].map(t => h('span', null, t)));
 renderTopics();
 renderGames();
+renderTiny();
+setAge(prefs.age === 'tiny' ? 'tiny' : 'big');
 syncToggles();
+Voice.init().then(renderTiny);
 
 /* ---------- App: offline, install, updates ---------- */
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;

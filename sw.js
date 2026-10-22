@@ -1,6 +1,6 @@
 // Mëso shqip! service worker: keeps the whole game on the device so it runs without internet.
 // Raise VERSION whenever you upload changed files, so every device fetches the new set.
-const VERSION = 'meso-shqip-v2';
+const VERSION = 'meso-shqip-v3';
 const ASSETS = [
   './',
   'index.html',
@@ -11,11 +11,21 @@ const ASSETS = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/maskable-512.png',
-  'icons/apple-touch-icon.png'
+  'icons/apple-touch-icon.png',
+  'audio/index.json'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
+  event.waitUntil((async () => {
+    const cache = await caches.open(VERSION);
+    await cache.addAll(ASSETS);
+    // Voices listed in audio/index.json are stored too, so toddlers hear them offline
+    try {
+      const list = await (await fetch('audio/index.json', { cache: 'no-store' })).json();
+      await cache.addAll(list.map(id => `audio/${id}.wav`));
+    } catch (e) {}
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
