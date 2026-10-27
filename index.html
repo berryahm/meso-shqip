@@ -680,6 +680,8 @@ const bestKey = id => GAMES[id].fixed ? id : `${id}:${topic}`;
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {} };
 
 /* ---------- Sound ---------- */
+// iPhone/iPad: play like a media app, so sounds and voices are heard even when the silent switch is on
+try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
 let actx = null;
 function tone(seq) {
   if (!prefs.sound) return;

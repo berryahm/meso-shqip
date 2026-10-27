@@ -1,6 +1,6 @@
 // Mëso shqip! service worker: keeps the whole game on the device so it runs without internet.
 // Raise VERSION whenever you upload changed files, so every device fetches the new set.
-const VERSION = 'meso-shqip-v3';
+const VERSION = 'meso-shqip-v4';
 const ASSETS = [
   './',
   'index.html',
